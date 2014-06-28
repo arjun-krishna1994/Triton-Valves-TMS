@@ -1,0 +1,197 @@
+
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editRecord(ID)
+{
+parent.window.location = "../../editEB?id=" + ID;
+
+
+}
+function viewDocuments(ID)
+{
+parent.window.location = "../../downBatchFiles?id=" + ID;
+
+
+}
+function uploadDocuments(ID)
+{
+parent.window.location = "../../uploadBatchFiles?id=" + ID;
+
+
+}
+function employeeList(ID)
+{
+parent.window.location = "../../mainBatchEmpAssignment?batchid=" + ID;
+
+
+}
+function trainerList(ID)
+{
+parent.window.location = "../../ttbMain?batchid=" + ID;
+
+
+}
+
+
+function completeBatch(ID)
+{
+var r=confirm("Are you sure?");
+if (r==true) {
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../completeBatch?id=" + ID ,true);
+ajaxReq.send();
+}
+}
+function stopBatch(ID)
+{
+var r=confirm("Are you sure?");
+if (r==true) {
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../stopBatch?id=" + ID ,true);
+ajaxReq.send();
+}
+}
+function startBatch(ID)
+{
+var r=confirm("Are you sure?");
+if (r==true) {
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../startBatch?id=" + ID ,true);
+ajaxReq.send();
+}
+}
+function doGrading(ID)
+{
+parent.window.location = "../../doGrading?batchid=" + ID;
+
+
+}
+function doFeedback(ID)
+{
+parent.window.location = "../../doFeedback?batchid=" + ID;
+
+
+}
+
+</script>
+<p>
+
+</p>
+<style type = "text/css">
+table {
+margin-left: 20px;
+margin-right: 20px;
+margin-top: 0%;
+margin-bottom:0px;
+border: thin solid black;
+caption-side: bottom;
+}
+th {
+background-color : #ff0000;
+color: white;
+}
+td, th {
+border: thin dotted gray;
+padding: 5px;
+}
+td{
+	color:black;
+}
+</style>
+<div class="added">
+<table> 
+<tr>
+	<th>Course Name</th>
+	<th>Course ID </th>
+	<th>Start Date</th>
+	<th>End Date </th>
+	<th> Timings </th>
+	<th> Edit Record </th>
+	<th> Employee List</th>
+	<th> Trainer List </th>
+	<th> Start Batch </th>
+	<th> Stop Batch </th>
+	<th> Do Grading </th>
+	<th> Provide Feedback </th>
+	<th> Complete Batch </th>
+	<th> View/Edit  Documents </th>
+	<th> Upload  Documents </th>
+</tr>
+{% for item in list %}
+<tr>
+	<td>{{item.course.course_name}}</td>
+	<td>{{item.course.course_id}}   </td>
+	<td>{{item.start_date}}</td>
+	<td>{{item.stop_date}}</td>
+
+	<td>{{item.start_time }}  {{item.stop_time }}</td>
+	
+	<td> {% if not item.course_ongoing and not item.course_finished and not item.course_completed%}
+		<input type = "button" id = "{{course.itemid}}" value = "Edit" onclick = "editRecord('{{item.id}}')" > 
+		{% else %} Edit 
+		{% endif %}
+	</td>
+	<td><input type = "button"  value = "List" onclick = "employeeList('{{item.id}}')" > </td>
+	<td><input type = "button"  value = "List" onclick = "trainerList('{{item.id}}')" > </td>
+	<td> {% if not item.course_ongoing and not item.course_finished and not item.course_completed%}
+		<input type = "button" value = " Start Batch" onclick = "startBatch('{{item.id}}')">
+		{% else %}Start Batch
+		{% endif %} 
+	</td>
+	<td> {% if item.course_ongoing %}
+		<input type = "button" value = " Stop Batch" onclick = "stopBatch('{{item.id}}')">
+		{% else %} Stop Batch
+		{% endif %}
+	</td>
+	<td> {% if not item.course_finished %}
+		<input type = "button" value = " Do Grading" onclick = "doGrading('{{item.id}}')">
+		{% else %} Do Grading
+		{% endif %}
+	</td>
+	<td>{% if not item.course_finished %}
+		<input type = "button" value = " Provide Feedback" onclick = "doFeedback('{{item.id}}')"> 
+		{% else %} Give Feedback
+		{% endif %}
+	</td>
+	<td> {% if not item.course_finished %}
+		<input type = "button" value = " Complete Batch" onclick = "completeBatch('{{item.id}}')">
+		{% else %} Complete Batch
+		{% endif %}
+	</td>
+	<td> <input type = "button" value = " View/EditDocuments" onclick = "viewDocuments('{{item.id}}')"> </td>
+	<td> <input type = "button" value = " Upload" onclick = "uploadDocuments('{{item.id}}')"> </td>
+</tr>
+{% endfor %}
+</table>
+</div>

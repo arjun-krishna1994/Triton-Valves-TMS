@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<table style = "margin-left: 20%; margin-top: 10%;"> 
+<tr>
+	<th>Course ID</th>
+	<th>Course Name </th>
+	<th>No. Of Employees</th>
+	<th>No. Of Trainers </th>
+	<th> Duration </th>
+	<th> See Full Lists </th>
+</tr>
+{% for item in list %}
+<tr>
+	<td>{{item.course.course_id}}</td>
+	<td>{{item.course.course_name}} </td>
+	<td>{{item.np}}</td>
+	<td>{{item.nt}}</td>
+
+	<td>{{item.course.duration}}</td>
+	<td><a href = "../../cead?id={{item.course.id}}"> Click Here </a></td>
+
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

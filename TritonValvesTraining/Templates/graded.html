@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<style type = "text/css">
+	margin-top: 10%;
+	color:red;
+</style>
+<div id = "graded" >
+{% for item in list %}
+<p> Employee Name: {{item.employee.userObj.first_name}} {{item.employee.userObj.first_name}} </p>
+<p> Employee ID: {{item.employee.userId}}  </p>
+
+{% if grading %}
+<p> Retraining Needed: {{item.retraning_needed}}  </p>
+<p> Retraining Date: {{item.probable_date_of_retraining}}  </p>
+{% endif %}
+{% for field in item.get_fields %}
+<p> {{field}} </p> 
+{% endfor %}
+{% endfor %}
+</div>
+
+{% endblock %}

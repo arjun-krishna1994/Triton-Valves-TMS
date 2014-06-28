@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="added">
+<table> 
+<tr>
+	<th>Start Date</th>
+	<th>Stop Date</th>
+	<th>Course</th>
+	<th>Timings</th>
+
+</tr>
+<tr>
+	<td>{{batch.start_date}}</td>
+	<td>{{batch.stop_date}}</td>
+	<td>{{batch.course.course_name}}</td>
+	<td>{{batch.start_time}}  to {{batch.stop_time}}  </td>
+
+</tr>
+</table>
+<p> Successfully Registered </p>
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}

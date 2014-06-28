@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editCourse(courseID)
+{
+window.location = "../../editCourse?course_id=" + courseID;
+
+
+}
+function deleteCourse(courseID)
+{
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../delCourse?course_id=" + courseID,true);
+ajaxReq.send();
+}
+</script>
+<div class="added">
+<table> 
+<tr>
+	<th>Course Name</th>
+	<th>Course ID </th>
+	<th>Department </th>
+	<th>Edit Course </th>
+	<th> Delete Course </th>
+
+</tr>
+{% for course in courses %}
+<tr>
+	<td>{{course.course_name}}</td>
+	<td>{{course.course_id}}</td>
+	<td>{% for dept in course.department.all %}
+	{{dept.dept_name}}
+	{% endfor %}
+	</td>
+	<td> <input type = "button" id = "{{course.course_id}}" value = "Edit" onclick = "editCourse('{{course.course_id}}')" > </td>
+	<td><input type = "button"  value = "Delete" onclick = "deleteCourse('{{course.course_id}}')" > </td>
+
+</tr>
+{% endfor %}
+</table>
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}

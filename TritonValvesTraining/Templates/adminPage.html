@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% block content %} 
+	{% load static from staticfiles  %}
+	{% load staticfiles %}2
+<div class="notifications">
+	<p> Notifications </p>
+	<div class="notification_container">
+		<p>
+   <ul id="ticker">
+        <li id="notify">Test Notification 1</li> 
+        <li id = "notify">Test Notification 2</li> 
+        <li id= "notify">Test Notification 3</li> 
+	</ul>
+</p>
+	</div>
+</div>
+
+
+<div class="mainbody">
+<div id="welcome">
+<p> Welcome Mr/Mrs.  {{first_name}}  {{last_name}} </p>
+<p> {{ deptName }} </p>
+</div>
+{% if Admin %}
+	<div id = "row_head">
+		<p> <a href= "../../searchPage" > EMPLOYEES </a> AND ORGANIZATION</p>
+	</div>
+<div id = "row">
+	<div id="names">
+		<a href= ""> Worker </a>
+	</div>
+	<div >
+		<a href = "../../registerUser?empType=registerEmployee"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div >	
+		<a href= "../../searchPage?w=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id = "row">
+	<div id="names">
+		<a href= ""> HOD </a>
+	</div>
+	<div>
+		<a href = "../../registerUser?empType=registerHOD"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"> </a>
+	</div>
+	<div>
+		<a href= "../../searchPage?h=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id = "row">	
+	<div id="names">	
+		<a href= ""> Manager </a>
+	</div>
+	<div>
+		<a href = "../../registerUser?empType=registerManager"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href= "../../searchPage?m=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>		
+</div>
+
+<div id = "row">
+	<div id="names">		
+		<a href= ""> Admin </a>
+	</div>
+	<div>
+		<a href = "../../registerUser?empType=registerAdmin"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href= "../../searchPage?a=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id = "row">	
+	<div id="names">	
+		<a href= ""> Department </a>
+	</div>
+	<div>
+		<a href = "../../createDepartment"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../searchDept"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>	
+</div>
+
+<div id = "row_head">
+		<p> MODULES</p>
+	</div>
+	
+<div id="row">
+	<div id="names">	
+		<a href = "../../searchCourse"> Modules </a>
+	</div>
+	<div>
+		<a href = "../../createCourse"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../searchCourse"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "../../ttcMain"> Trainers </a>
+	</div>
+	<div>
+		<a href = "../../ttcMain"><img style = "margin-left : 100px;"src = "{% static 'images/change.png' %}" width="85" height="30"></a>
+	</div>
+	<div>
+	</div>
+	
+</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Employees Assigned </a>
+	</div>
+	<div>
+		<a href = "../../maincea"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../mcead"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Batches </a>
+	</div>
+	<div>
+		<a href = "../../assb"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../essb"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+<div id = "row_head">
+		<p> ANNUAL DOCUMENTS </p>
+	</div>
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Calendar </a>
+	</div>
+	<div>
+		<a href = "../../getCalendarTemplate"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../viewCalendar"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Indent </a>
+	</div>
+	<div>
+		<a href = "#"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "#"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+<div id="row">
+	<div id="names">	
+		<a href = "#"> All Documents </a>
+	</div>
+	<div>
+		<a href = "../../uploadFile"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../searchFiles"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+
+</div>	
+
+<div id = "row_head">
+		<p> <a href= "../../searchPage" > SEARCH EMPLOYEES </a> </p>
+	</div>
+ {% endif %}
+
+
+ 
+{% if Manager %}
+
+<div id = "row_head">
+		<p> <a href= "../../searchPage" > EMPLOYEES </a> AND ORGANIZATION</p>
+	</div>
+<div id = "row">
+	<div id="names">
+		<a href= ""> Worker </a>
+	</div>
+	<div >
+		<a href = "../../registerUser?empType=registerEmployee"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div >	
+		<a href = "../../modifyEmployee"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id = "row_head">
+		<p> MODULES</p>
+	</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Trainers </a>
+	</div>
+	<div>
+		<a href = "../../assignTTC"><img src = "{% static 'images/add.jpg' %}" width="85" height="30"></a>
+	</div>
+	<div>
+		 <a href = "../../removeTFC"><img src = "{% static 'images/edit.png' %}" width="85" height="30"></a>
+	</div>
+	<div>
+	</div>
+	
+</div>
+<div id = "row_head">
+		<p> ANNUAL DOCUMENTS </p>
+	</div>
+<div id="row">
+	<div id="names">	
+		<a href = "../../viewCalendar"> Calendar </a>
+	</div>
+	<div>
+		<a href = "../../modifyCalendar"><img style = "margin-left : 100px;" src = "{% static 'images/change.png' %}" width="85" height="30"></a>
+	</div>
+	<div>
+	</div>
+</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Indent </a>
+	</div>
+	<div>
+		<a href = "../../generateTI"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "#"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+<div id="row">
+	<div id="names">	
+		<a href = "#"> All Documents </a>
+	</div>
+	<div>
+		<a href = "../../uploadFile"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../searchFiles"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+
+</div>	
+
+<div id = "row_head">
+		<p> <a href= "../../searchPage" > SEARCH EMPLOYEES </a> </p>
+	</div>
+{% endif %}
+
+
+
+
+
+{% if Employee %}
+
+<div id = "row_head">
+		<a href = "../../viewCalendar"><p> View My Calendar </p></a>
+	</div>
+
+{% endif %}
+{% if HOD %}
+
+<div id = "row_head">
+		<p> <a href= "../../searchPage" > EMPLOYEES </a> AND ORGANIZATION</p>
+	</div>
+<div id = "row">
+	<div id="names">
+		<a href= ""> Worker </a>
+	</div>
+	<div >
+		<a href = "../../registerUser?empType=registerEmployee"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div >	
+		<a href= "../../searchPage?w=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id = "row">	
+	<div id="names">	
+		<a href= ""> Manager </a>
+	</div>
+	<div>
+		<a href = "../../registerUser?empType=registerManager"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href= "../../searchPage?w=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>		
+</div>
+
+
+<div id = "row_head">
+		<p> MODULES</p>
+	</div>
+	
+<div id="row">
+	<div id="names">	
+		<a href = "../../searchCourse"> Modules </a>
+	</div>
+	<div>
+		<a href = "../../createCourse"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../searchCourse"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "../../ttcMain"> Trainers </a>
+	</div>
+	<div>
+		<a href = "../../ttcMain"><img style = "margin-left : 100px;"src = "{% static 'images/change.png' %}" width="85" height="30"></a>
+	</div>
+	<div>
+	</div>
+	
+</div>
+
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Employees Assigned </a>
+	</div>
+	<div>
+		<a href = "../../maincea"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../mcead"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+<div id="row">
+	<div id="names">	
+		<a href = "#"> Batches </a>
+	</div>
+	<div>
+		<a href = "../../assb"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+	</div>
+	<div>
+		<a href = "../../essb"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+	</div>
+</div>
+<div id = "row_head">
+		<a href = "../../viewCalendar"><p> View Calendar </p></a>
+	</div>
+<div id = "row_head">
+		<p> <a href= "../../searchPage" > Search Employees </a> </p>
+	</div>
+
+
+{% endif %}
+
+
+
+ </div>
+{% endblock %}

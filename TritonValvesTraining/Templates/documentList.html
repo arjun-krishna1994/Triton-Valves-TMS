@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editFile(ID)
+{
+window.location = "../../editFile?fileID=" + ID;
+
+
+}
+function delFile(ID)
+{
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../delFile?fileID=" + ID,true);
+ajaxReq.send();
+}
+</script>
+<style type="text/css">
+#main__body{
+	color:red;
+	margin-top: 5%;
+	margin-left: 0%;
+	margin-right: 0px;
+	width:100%;
+}
+#inner_body{
+	float:left;
+	width:26%;
+	border: solid 1px red;
+	padding:3%;
+	font-size: 14px;
+}
+</style>
+<div id = "main__body">
+<h2> <center> <strong>{{message}} </strong></center></h2>
+{% for document in documents %}
+<div id = "inner_body">
+<p> <strong>Name:</strong> {{document.name }} <p>
+<p> <strong>Details:</strong> {{document.details}} </p>
+<p> <strong>LastModified At : </strong>{{document.updated}} </p>
+<p> <strong>Created On : </strong>{{document.created}} </p>
+<p> <strong>Users who modified this file:</strong> </p>
+ {% for emp in document.modifiedBy.all %}
+	<p>{{emp.first_name}} {{emp.last_name}} , {{emp.userId}}</p>
+	{% endfor %}
+<p> <a style = "margin-left: 0%;" href = "{{document.file.url}}" target = "_blank" id = "links">Download Link </a>
+<input style = "float:left; padding : 7px; margin: 5px; width: auto;"type = "button" onclick = "delFile('{{document.id}}')" value = "Delete">
+<input style = "float:left; padding : 7px; margin: 5px; width: auto;" type = "button" onclick = "editFile('{{document.id}}')" value = "Edit">  
+<br>
+</p>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

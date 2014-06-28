@@ -1,0 +1,40 @@
+<html>
+<script>
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+function ajaxTrial()
+{
+var mypostrequest = new ajaxRequest();
+mypostrequest.onreadystatechange=function(){
+alert("1");
+   document.innerHtml = mypostrequest.responseText;
+  }
+
+
+var namevalue=encodeURIComponent(document.getElementById("name").value);
+var parameters="name="+namevalue;
+mypostrequest.open("POST", "../ajaxPost", true)
+mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+mypostrequest.setRequestHeader('X-CSRFToken', '{% csrf_token %}');
+mypostrequest.send(parameters);
+}
+</script>
+<body>
+<input type = "text" id = "name" label = "Name" >
+<input type = "button" value = "Submit" onclick = "ajaxTrial()" label = "Submit">
+</body>
+</html>

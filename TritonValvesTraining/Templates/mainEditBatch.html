@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<script  >
+
+function submitSearch()
+{
+
+
+
+var course = document.getElementById("course").value;
+var year = document.getElementById("year").value;
+var all = document.getElementById("all").checked;
+var par2 = "&course=" + course +"&all=" + all + "&year=" + year;
+var ifrm = document.getElementById('searchFrame');
+ifrm.src = "/searchEB?" +  par2;
+
+}
+</script>
+<style type="text/css">
+#essb {
+	color:red;
+}
+#emptype{
+	margin-left:43%;
+	margin-top: 3%;
+}
+</style>
+<div id = "essb">
+<p><br><br><br>
+<h1><center><strong>Search Employees:</strong></center></h1>
+</p>
+<p>
+
+<div id="emptype">
+<h3> Select Course: </h3>
+<select id = "course" class = "viewMenu" >
+	  {% for course in courses %}
+      
+	  <option value = "{{course.id}}"  onclick = "submitSearch();"> {{course.course_name}} </option>
+	  {% endfor %}
+</select>
+
+All:<input type = "checkbox" id = 'all' onclick = "submitSearch()">
+<select id="year" name="start_date_year">
+<option value="none">------</option>
+{% for year in years %}
+<option value="{{year}}">{{year}}</option>
+{% endfor %}
+</select>
+</p>
+<p><input type = "button" value = " Search" onclick = "submitSearch()">
+<br></p>
+</div>
+</div>
+<iframe  src = "../../../searchEB"  width = "100%" height = "60%" frameborder="0" marginwidth="5px" id = "searchFrame">  Your Browser Does not support Iframe Upgrade your browser </iframe>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function assttc(ID)
+{
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				iframe2 = parent.document.getElementById('iframe2');
+				iframe2.src = iframe2.src;
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../assetb?empid=" + ID + "&batchid=" + {{batch.id}},true);
+ajaxReq.send();
+
+}
+</script>
+<div class="added">
+<table id = "table"> 
+<tr>
+	<th>Employee ID</th>
+	<th>Employee Name </th>
+	<th>Employee Login Name </th>
+	<th> Add to batch </th>
+</tr>
+{% for item in list %}
+<tr id = "{{item.id}}" >
+	<td>{{item.userId}}</td>
+	<td>{{item.userObj.first_name}}  {{item.userObj.last_name}} </td>
+	<td>{{item.userObj.username}}</td>
+
+	<td> {% if not batch.course_finished %} <input type = "button"  value = "Add" onclick = "assttc('{{item.id}}')" >{% endif %} </td>
+
+</tr>
+{% endfor %}
+</table>
+</div>

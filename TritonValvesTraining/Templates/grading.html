@@ -1,0 +1,8 @@
+
+<form style = "color:red; margin-left: 35%; margin-top:5%;" method = "POST"  action = "" >
+{% csrf_token %}
+{{ forms.as_p }} 
+{{ forms.management_form }}
+
+<input type = "submit">
+</form>

@@ -1,0 +1,56 @@
+<html>
+<head>
+	{% load static from staticfiles  %}
+	{% load staticfiles %}
+<title>
+Triton Valves
+
+</title>
+<script type="text/javascript" src="{%static "jquery-1.9.1.js"%}"></script>
+<link type="text/css" rel="stylesheet" href="{% static "TMS_header.css" %}"/>
+<link type="text/css" rel="stylesheet" href="{% static "menu.css" %}"/>
+ <script type="text/javascript" src="jquery.js"></script>
+<style type="text/css">
+
+.box{
+	position:absolute;
+	width:500px;
+	top: 50px;
+	left: 400px;
+	color:red;
+}
+.added{
+	position:absolute;
+	color: red;
+	width:60%;
+	top: 0%;
+	left:20%;
+}
+
+</style>
+<script type="text/javascript">
+
+
+function ticker() {
+    $('#ticker li:first').slideUp(function() {
+        $(this).appendTo($('#ticker')).slideDown();
+    });
+}
+setInterval(ticker, 3000);
+</script>
+
+</head>
+<body>
+<p>
+<div class="header">
+	<div id="options">
+			<a class="option" href = "../../accounts/password_change/" > Change Password </a>
+			<a class="option" href = "../../logout" > Logout </a>
+			</div>
+	<div id= "tms">	<a href = "../../loggedin" > Training Management System </a></div>
+</div>
+</p>
+{% block content %}
+{% endblock %}
+</body>
+</html>

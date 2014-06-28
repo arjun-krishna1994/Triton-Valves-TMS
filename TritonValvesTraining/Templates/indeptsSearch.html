@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editDepartment(deptID)
+{
+alert("1");
+window.location = "../../editDept?deptID=" + deptID;
+
+
+}
+function deleteDepartment(deptID)
+{
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../delDept?deptID=" + deptID,true);
+ajaxReq.send();
+}
+</script>
+<p>
+
+<div class="added">
+<table> 
+<tr>
+	<th>Department Name</th>
+	<th>Department ID </th>
+	<th>Edit Department </th>
+	<th> Delete Department </th>
+
+</tr>
+{% for dept in depts %}
+<tr>
+	<td>{{dept.dept_name}}</td>
+	<td>{{dept.deptID}}</td>
+	<td> <center><input type = "button" id = "{{dept.deptID}}" value = "Edit" onclick = "editDepartment('{{dept.deptID}}')" > </center></td>
+	<td><center><input type = "button"  value = "Delete" onclick = "deleteDepartment('{{dept.deptID}}')" ></center> </td>
+
+</tr>
+{% endfor %}
+</table>
+
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}

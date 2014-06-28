@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="added">
+<table> 
+<tr>
+	<th>Course Name</th>
+	<th>Course ID </th>
+	<th>Course Duration </th>
+	<th>Course Objective </th>
+	<th>Misc. Details </th>
+	<th>Department </th>
+</tr>
+<tr>
+	<td>{{course.course_name}}</td>
+	<td>{{course.course_id}}</td>
+	<td>{{course.duration}}</td>
+	<td>{{course.objective}}</td>
+	<td>{{course.misc_Details}}</td>
+	<td>{% for department in course.department.all %}
+	{{department.dept_name}},
+	{% endfor %}</td>
+</tr>
+</table>
+<p> Course Successfully Registered  . </p>
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}

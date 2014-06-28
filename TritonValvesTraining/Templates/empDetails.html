@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function viewDetails(batchid)
+{
+window.location = "../../viewBatch?batchid=" + batchid
+}
+</script>
+<table>
+ <tr>
+	<th>	Employee Id </th>
+	<th>	Employee Name </th>
+	<th>	Department </th>
+	<th>	Unit </th>
+	<th>	Designation </th>
+	<th>	Internal/External S</th>
+	<th>	Shift</th>
+	<th width = "10%" >	Email </th>
+	<th>	Phone Number </th>
+	<th>	Address </th>
+	<th>	Login ID </th>
+	<th>	Administrator Status </th>
+	<th>	HOD Status </th>
+	<th>	Manager Status </th>
+	<th>	Staff Status </th>
+</tr>
+<tr>
+	<td>	{{emp.userId}} </td>
+	<td>	{{emp.userObj.first_name }}  {{emp.userObj.last_name }}</td>
+
+	<td>	{{emp.department.dept_name}}</td>
+	<td>	{{emp.unit}} </td>
+	<td>	{{emp.designation}} </td>
+	<td>	{{emp.is_Internal}} </td>
+	<td>	{{emp.current_shift}} </td>
+	<td>	{{emp.userObj.email}} </td>
+	<td>	{{emp.phone_Number}} </td>
+	<td>	{{emp.address}} </td>
+	<td>	{{emp.userObj.username}} </td>
+	<td>	{{emp.is_Admin}} </td>
+	<td>	{{emp.is_HOD}} </td>
+	<td>	{{emp.is_Manager}} </td>
+	<td>	{{emp.is_Staff}} </td>
+
+
+</tr>
+
+</table>
+
+<p> Courses Attended <p>
+<table>
+ <tr>
+	<th>Course	 </th>
+	<th>Batch Details	 </th>
+	<th>Grades & Feedback	 </th>
+</tr>
+{% for record in coursesAttened %}
+<tr>
+<td> {{record.batch.course.course_name}} </td>
+<td> <input type = "button"  value = "Details" onclick = "viewDetails('{{record.batch.id}}')" > </td>	
+<td> <input type = "button"  value = "Grades" onclick = "viewGF('{{record.batch.id}}')" > </td>
+</tr>
+{% endfor %}
+</table>
+
+
+<p> Courses Attending <p>
+<table>
+ <tr>
+	<th>Course	 </th>
+	<th>Batch Details	 </th>
+</tr>
+{% for record in coursesAttending %}
+<tr>
+<td> {{record.batch.course.course_name}} </td>
+<td> <input type = "button"  value = "Details" onclick = "viewDetails('{{record.batch.id}}')" > </td>	
+</tr>
+{% endfor %}
+</table>
+
+<p> Courses To Attend <p>
+<table>
+ <tr>
+	<th>Course	 </th>
+	<th>Batch Details	 </th>
+</tr>
+{% for record in coursesToAttend %}
+<tr>
+<td> {{record.course.course_name}} </td>
+<td> <input type = "button"  value = "Details" onclick = "viewDetails('{{record.batch.id}}')" > </td>	
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

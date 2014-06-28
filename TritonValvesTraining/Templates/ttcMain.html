@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function submitSearch()
+{
+var first_name = document.getElementById("first_name").value;
+var last_name = document.getElementById("last_name").value;
+var userId = document.getElementById("userId").value;
+var username = document.getElementById("username").value;
+var course = document.getElementById("course").value;
+
+
+
+var par1 = "username=" + username + "&userID=" + userId + "&first_name=" + first_name + "&last_name=" + last_name
+var par2 = "&courseid=" + course 
+var ifrm1 = document.getElementById('iframe1');
+var ifrm2 = document.getElementById('iframe2');
+ifrm1.src = "/ttcEmpList?" + par1 + par2;
+ifrm2.src = "/ttcTrainerList?" + "courseid=" + course;
+}
+</script>
+<style type="text/css">
+#ttcmain_css {
+	color:red;
+	border:none;
+	margin:0px;;
+}
+#ttcmain_css td {
+	border:none;
+	color: red;
+	margin:none;
+}
+#empdetail_ttcmain{
+	color:red;
+	margin-top:6%;
+}
+#iframe1{
+	float:left;
+	margin-left:5%;
+	}
+#iframe2{
+	float:left;
+	margin-left:5%;
+	}
+.SearchField{
+	float: left;
+	padding-right: 1%;
+	margin-right: 2%
+	}
+</style>
+<p>
+<div id="empdetail_ttcmain">
+
+<h3> Enter Employee Details: </h3>
+
+<input class = "SearchField" type = "text" name = "first_name" placeholder = "First Name" id = "first_name" onkeypress = "submitSearch()"/ >
+
+:<input class = "SearchField" type = "text" name = "last_name" placeholder = "Last Name" id = "last_name"  onkeypress = "submitSearch()"/>
+
+:<input class = "SearchField" type = "text" name = "userId" placeholder = "Employee ID" id = "userId"  onkeypress ="submitSearch()"/>
+
+:<input class = "SearchField" type = "text" name = "username" placeholder = "Login Name"  id = "username" onkeypress = "submitSearch()"/>
+
+
+</div>
+</p>
+<select id = "course" onchange = "submitSearch()">
+<option value="" > Select Course </option>
+{% for course in courses %}
+  <option value="{{course.course_id}}" onclick = "submitSearch()">{{course.course_name}}</option>
+{% endfor %}
+
+</select>
+<input type = "button" value = " Search" onclick = "submitSearch()">
+<p></p>
+<iframe  src = "../../../ttcEmpList"  width = "45%" height = "70%" frameborder="0" marginwidth="1%" id = "iframe1">  Your Browser Does not support Iframe Upgrade your browser </iframe>
+<iframe  src = "../../../ttcTrainerList"  width = "45%" height = "70%" frameborder="0" marginwidth="1%" id = "iframe2">  Your Browser Does not support Iframe Upgrade your browser </iframe>
+{% endblock %}

@@ -1,0 +1,9 @@
+How Notifications are Generated:
+First let us see what are all the notifications to be generated:
+1.Batch is going to start (for Everyone Involved)
+2. Batch is pending Grading (for HOD)
+3. Batch is pending Feedback (for employees and admins )
+4. Generation Of Annual Training Calendar.(for admins only)
+A code is associated with every notification.
+ Want to leave?
+oay 1 min

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+	<head>
+	{% load static from staticfiles  %}
+	{% load staticfiles %}
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Triton Valves
+</title>
+
+<link type="text/css" rel="stylesheet" href="{% static "TMS_header.css" %}"/>
+<style type="text/css">
+
+</style>
+</head>
+<script>
+function doInitial()
+{
+if( '{{cond}}' == 'y' )
+{
+alert("Employees Registered");
+}
+}
+</script>
+<body style= "margin-left:20%;" onload = "doInitial()">
+
+
+<table style="margin-top:0px;">
+ <tr>
+	<th>	Employee Id </th>
+	<th>	Employee Name </th>
+	<th>	Department </th>
+	{% for course in courses%}
+	<th> {{course.course_name}} </th>
+	{% endfor %}
+</tr>
+<form method = "POST" action = "" id = "{{item.userId}}">
+{% csrf_token %}
+{% for item in list %}
+<tr>
+	
+{% csrf_token %}
+	<td> {{item.emp.userId}} <input type = "hidden" value = "{{item.emp.userId}}" name = "userId">	</td>
+	<td>{{item.emp.userObj.first_name}} {{item.emp.userObj.last_name}}	</td>
+	<td>{{item.emp.department.dept_name}} 	</td>
+	{% for course in item.coursedata %}
+	<td> <input type = "checkbox" name ="{{item.emp.userId}}{{course.course_id}}"  value = "true" {{course.checked}}> </td>
+	{% endfor %} 
+
+</tr>
+{% endfor %}
+<input type = "submit" value = "Register">	
+</form>
+</table>
+</body>
+
+</html>

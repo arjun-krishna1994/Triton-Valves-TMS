@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<script  >
+function ajaxRequest()
+{
+ return new XMLHttpRequest();
+}
+function submitSearch()
+{
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){
+			if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+			alert("here inside");
+				var ifrm = document.getElementById('searchFrame');
+				ifrm.src = "/search?" + par1 + par2;
+				alert("here again");
+
+
+			}		
+					};
+var first_name = document.getElementById("first_name").value;
+var last_name = document.getElementById("last_name").value;
+var userId = document.getElementById("userId").value;
+var username = '';
+
+var worker = document.getElementById("w").checked;
+var hod = document.getElementById("h").checked;
+var admin = document.getElementById("a").checked;
+var manager = document.getElementById("m").checked;
+var staff = document.getElementById("s").checked;
+var par1 = "username=" + username + "&userID=" + userId + "&first_name=" + first_name + "&last_name=" + last_name;
+var par2 = "&w=" + worker + "&h=" + hod + "&a=" + admin + "&m=" + manager + "&s=" + staff;
+var ifrm = document.getElementById('searchFrame');
+ifrm.src = "/search?" + par1 + par2;
+//ajaxReq.open("GET", "/search?" + par1 + par2 ,true);
+//ajaxReq.send();
+
+}
+</script>
+<style type="text/css">
+#body_search{
+	color:red;
+	margin-left: 1%;
+	margin-top:5%;
+	width: 100%;
+	display: block;
+}
+#table_search{
+	margin:0px;
+	color:red;
+	border:none;
+}
+#table_search td{
+	border:none;
+	color:red;
+	}
+#empdetail{
+	float:top;
+	}
+#emptype{
+	float:top;
+	margin-left: 0%;
+	}	
+#emp{
+	width: 25%;
+	float: left;
+	}
+#frame{
+	float:left;
+	width:70%;
+}
+</style>
+<div id = "body_search">
+
+<h1 style = "color:red; "><center><strong>Search Employees:</strong></center></h1>
+<div id = "emp">
+<div id="empdetail">
+<h3> Enter Employee Details: </h3>
+<table id = "table_search">
+<tr>
+<td>First Name :</td><td><input type = "text" name = "first_name" id = "first_name" onchange="submitSearch()"/></td>
+</tr>
+<tr>
+<td>Last Name: </td><td><input type = "text" name = "last_name" id = "last_name"  onchange="submitSearch()"/></td>
+</tr>
+<tr>
+<td>Employee ID : </td><td><input type = "text" name = "userId" id = "userId"  onchange="submitSearch()"/></td>
+</tr>
+
+</table>
+</div>
+<div id="emptype">
+<h3> Select Employee Type: </h3>
+<div id = "radioButtons">
+<table id="table_search">
+<tr>
+  <td> Worker : </td><td><input type = "radio" name = "employeeType" value = "w" label = "Worker" id = "w" onchange="submitSearch()" {%if w %} checked {% endif %}/></td>
+   </tr>
+   <tr>
+   <td>Manager : </td><td><input type = "radio" name = "employeeType" value = "m" label = "Manger"  id = "m" onchange="submitSearch()" {%if m %} checked {% endif %} /></td>
+   </tr>
+   <tr>
+   <td>HOD :</td><td> <input type = "radio" name = "employeeType" value = "h" label = "HOD" id = "h" onchange="submitSearch()" {%if h %} checked {% endif %} /></td>
+   </tr>
+   <tr>
+   <td>Admin : </td><td><input type = "radio" name = "employeeType" value = "a" label = "Admin" id = "a" onchange="submitSearch()" {%if a %} checked {% endif %} / ></td>
+</tr>
+<tr>
+   <td>Staff : </td><td><input type = "radio" name = "employeeType" value = "s" label = "Staff" id = "s" onchange="submitSearch()" {%if s %} checked {% endif %} / ></td>
+</tr>
+   </table>
+   </div>
+
+<input type = "button" value = " Search" onclick = "submitSearch()">
+
+</div>
+</div>
+<div id="frame">
+<iframe src = "../../../search" width = "107%" height = "80%" frameborder="0" marginwidth="5px" id = "searchFrame" >  Your Browser Does not support Iframe Upgrade your browser </iframe>
+
+</div>
+{% endblock %}

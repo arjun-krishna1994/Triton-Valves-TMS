@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="added">
+<table> 
+<tr>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>ID</th>
+	<th>Username</th>
+	<th>Phone Number</th>
+	<th>Email ID</th>
+	<th>Designation</th>
+	<th>Address</th>
+	<th>Working Status</th>
+	<th>Is He/She Internal</th>
+	<th>Admin Status</th>
+	<th>HOD Status</th>
+	<th>Manager Status</th>
+</tr>
+<tr>
+	<td>{{employee.userObj.first_name}}</td>
+	<td>{{employee.userObj.last_name}}</td>
+	<td>{{employee.userId}}</td>
+	<td>{{employee.userObj.username}}</td>
+	<td>{{employee.phone_Number}}</td>
+	<td>{{employee.userObj.email}}</td>
+	<td>{{ employee.designation}}</td>
+	<td>{{employee.address }}</td>
+	<td>{{employee.working_Status}}</td>
+	<td>{{employee.is_Internal}}</td>
+	<td>{{employee.is_Admin}}</td>
+	<td>{{ employee.is_HOD }}</td>
+	<td>{{employee.is_Manager}}</td>
+</tr>
+</table>
+<p> Successfully Registered </p>
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}
+

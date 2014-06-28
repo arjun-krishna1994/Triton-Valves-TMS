@@ -1,0 +1,41 @@
+<html>
+<script>
+function ajaxRequest(){
+ var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"] //activeX versions to check for in IE
+ if (window.ActiveXObject){ //Test for support for ActiveXObject in IE first (as XMLHttpRequest in IE7 is broken)
+  for (var i=0; i<activexmodes.length; i++){
+   try{
+    return new ActiveXObject(activexmodes[i]);
+   }
+   catch(e){
+    //suppress error
+   }
+  }
+ }
+ else if (window.XMLHttpRequest) // if Mozilla, Safari etc
+  return new XMLHttpRequest();
+ else
+  return false;
+}
+function ajaxTrial()
+{
+var mypostrequest = new ajaxRequest();
+mypostrequest.onreadystatechange=function(){
+alert("1");
+   document.innerHtml = mypostrequest.responseText;
+  }
+
+
+var namevalue=encodeURIComponent(document.getElementById("name").value);
+var parameters="name="+namevalue;
+mypostrequest.open("POST", "../ajaxPost", true)
+mypostrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+mypostrequest.setRequestHeader('X-CSRFToken', '{% csrf_token %}');
+mypostrequest.send(parameters);
+}
+</script>
+<body>
+<input type = "text" id = "name" label = "Name" >
+<input type = "button" value = "Submit" onclick = "ajaxTrial()" label = "Submit">
+</body>
+</html>

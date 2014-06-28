@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+	<head>
+	{% load static from staticfiles  %}
+	{% load staticfiles %}
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Triton Valves
+</title>
+
+<link type="text/css" rel="stylesheet" href="{% static "TMS_header.css" %}"/>
+<style type="text/css">
+
+</style>
+</head>
+<body>
+
+<script >
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editEmployee(userid)
+{
+var emp = document.getElementById(userid);
+parent.window.location = "../../../editEmployee?userid=" + userid ;
+}
+function viewEmployee(userid)
+{
+parent.window.location = "../../../viewEmployee?empid=" + userid ;
+}
+function deleteEmployee(userid)
+{
+alert("1");
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../delEmployee?empId=" + userid,true);
+ajaxReq.send();
+}
+</script>
+<table style = "margin-top: 0px;">
+ <tr>
+	<th> No. </th>
+	<th>	Employee Id </th>
+	<th>	Employee Name </th>
+	<th>	Department </th>
+	<th>	Designation </th>
+	<th> View Details </th>
+	<th>	Edit </th>
+	<th>    Delete </th>
+</tr>
+{% for item in list %}
+<tr>
+	<td> {{forloop.counter }}	</td>	
+	<td> {{item.userId}}	</td>
+	<td>{{item.userObj.first_name}} {{item.userObj.last_name}}	</td>
+	<td> {{item.department.dept_name}}</td>
+	<td> {{item.designation}}</td>
+	<td><input type = "button" value = "View" onclick = "viewEmployee('{{item.id}}')"> </td>
+	<td><input type = "button" value = "edit" id = "{{item.userId}}" onclick = "editEmployee('{{item.userId}}')"> </td>	</td>
+	<td><input type = "button" value = "delete"  onclick = "deleteEmployee('{{item.userId}}')">	</td>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="added">
+<table> 
+<tr>
+	<th>Department Name</th>
+	<th>Department ID </th>
+	<th> Employee ID </th>
+
+</tr>
+<tr>
+	<td>{{result.department.dept_name}}</td>
+	<td>{{result.department.deptID}}</td>
+	<td>{{result.employee.userId}}</td>
+</tr>
+</table>
+
+</div>
+{% endblock %}

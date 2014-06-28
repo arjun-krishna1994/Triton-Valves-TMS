@@ -1,0 +1,32 @@
+
+
+{% extends "base.html" %}
+{% block content %}
+
+<style type="text/css">
+.added{
+color: red;
+	width:1300px;
+	position:absolute;
+	top: 100px;
+	left:50px;
+	
+}
+</style>
+<div class="added">
+<table> 
+<tr>
+	<th>Department Name</th>
+	<th>Department ID </th>
+
+</tr>
+<tr>
+	<td>{{dept.dept_name}}</td>
+	<td>{{dept.deptID}}</td>
+
+</tr>
+</table>
+<p> Department Successfully Registered , Remember to register It's HOD too . </p>
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}

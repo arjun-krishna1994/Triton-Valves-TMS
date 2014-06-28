@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<p> Employee: <a href = "../../viewEmployee?empid={{emp.id}}" > {{emp.first_name}} {{emp.last_name}} </p>
+<p> Batch: <a href = "../../viewBatch?batchid={{batch.id}}" > {{emp.first_name}} {{emp.last_name}} </p>
+<p> Grades:  </p>
+<p> Feedback: </p>
+<p> Employee Feedback </p>
+<p> Pre Training: {{feedback.pre_training}}</p>
+<p> Post Training: {{feedback.post_training}}</p>
+<p> Expectations Met: {{feedback.expectations_met}}</p>
+<p> Reasons Not Met: {{feedback.reasons_not_met}}</p>
+<p> Programme Feedback </p>
+<p> Training Methodology: {{feedback.training_methodology}}</p>
+<p> Use Of AV Techniques: {{feedback.use_of_AV_techniques}}</p>
+<p> Arrangement Of Training Hall: {{feedback.aoth}}</p>
+<p> Opinion: {{feedback.opinion}}</p>
+<p> Quality Of Course Material {{feedback.quality_of_courseMaterial}}</p>
+<p> Subject Knowledge: {{feedback.subject_knowledge}}</p>
+<p> Presentation Skills: {{feedback.presentation_skills}}</p>
+<p> Communication Skills: {{feedback.communication_skills}}</p>
+<p> Suggestions: {{feedback.suggestions}}</p>
+<p> Interaction With Participants: {{feedback.iwp}}</p>
+{% endblock %}
