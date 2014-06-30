@@ -12,6 +12,13 @@ window.location = "../../editCourse?course_id=" + courseID;
 
 
 }
+function createBatches(courseID)
+{
+var number = document.getElementById(courseID).value;
+window.location = "../../createBatches?courseid=" + courseID + "&num=" + number;
+
+
+}
 function deleteCourse(courseID)
 {
 var ajaxReq = ajaxRequest();
@@ -29,23 +36,34 @@ ajaxReq.send();
 <div class="added">
 <table> 
 <tr>
-	<th>Course Name</th>
-	<th>Course ID </th>
+	<th>Module Name</th>
+	<th>Module ID </th>
 	<th>Department </th>
-	<th>Edit Course </th>
-	<th> Delete Course </th>
-
+	<th>Edit Module </th>
+	<th> Delete Module </th>
+	<th>No. Of Employees</th>
+	<th>No. Of Trainers </th>
+	<th> Duration </th>
+	<th> See Full Lists </th>
+	<th> No. Of Batches</th>
+	<th> Create Batches</th>
 </tr>
-{% for course in courses %}
+{% for item in list %}
 <tr>
-	<td>{{course.course_name}}</td>
-	<td>{{course.course_id}}</td>
-	<td>{% for dept in course.department.all %}
+	<td>{{item.course.course_name}}</td>
+	<td>{{item.course.course_id}}</td>
+	<td>{% for dept in item.course.department.all %}
 	{{dept.dept_name}}
 	{% endfor %}
 	</td>
-	<td> <input type = "button" id = "{{course.course_id}}" value = "Edit" onclick = "editCourse('{{course.course_id}}')" > </td>
-	<td><input type = "button"  value = "Delete" onclick = "deleteCourse('{{course.course_id}}')" > </td>
+	<td> <input type = "button"  value = "Edit" onclick = "editCourse('{{item.course.course_id}}')" > </td>
+	<td><input type = "button"  value = "Delete" onclick = "deleteCourse('{{item.course.course_id}}')" > </td>
+		<td><a href = "../../cead?id={{item.course.id}}"> {{item.np}} </a></td>
+	<td>{{item.nt}}</td>
+	<td>{{item.course.duration}}</td>
+	
+	<td><input type= "text" id = "{{item.course.id}}"  > </td>
+	<td><input type = "button"  value = "batches" onclick = "createBatches('{{item.course.id}}')" ></td>
 
 </tr>
 {% endfor %}

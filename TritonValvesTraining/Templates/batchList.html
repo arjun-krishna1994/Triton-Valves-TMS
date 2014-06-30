@@ -147,10 +147,11 @@ td{
 	<th> Complete Batch </th>
 	<th> View/Edit  Documents </th>
 	<th> Upload  Documents </th>
+	<th> View Details</th>
 </tr>
 {% for item in list %}
 <tr>
-	<td>{{item.course.course_name}}</td>
+	<td > {{item.course.course_name}}</td>
 	<td>{{item.course.course_id}}   </td>
 	<td>{{item.start_date}}</td>
 	<td>{{item.stop_date}}</td>
@@ -174,12 +175,12 @@ td{
 		{% else %} Stop Batch
 		{% endif %}
 	</td>
-	<td> {% if not item.course_finished %}
+	<td> {% if not item.course_finished and item.course_completed%}
 		<input type = "button" value = " Do Grading" onclick = "doGrading('{{item.id}}')">
 		{% else %} Do Grading
 		{% endif %}
 	</td>
-	<td>{% if not item.course_finished %}
+	<td>{% if not item.course_finished and item.course_completed %}
 		<input type = "button" value = " Provide Feedback" onclick = "doFeedback('{{item.id}}')"> 
 		{% else %} Give Feedback
 		{% endif %}

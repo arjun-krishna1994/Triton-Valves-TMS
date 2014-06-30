@@ -3,6 +3,7 @@ import time
 from Users import userfunctions
 from xlwt import*
 import datetime
+from Courses.models import BatchDetails, Course
 def make_l4pa1(batch,employees ,trainers ,file_location):
     trainerNames = []
     for trainer in trainers:
@@ -516,8 +517,8 @@ def make_l4pa5(file_location, batch , trainers ,employeeFeedbacks):
 
     wb.save(file_location)
 
-
 """
+
 # -*- coding: cp1252 -*-
 import xlrd
 import time
@@ -636,7 +637,7 @@ import xlrd
 import time
 from xlwt import*
 
-def read_calendar(file_location):
+def read_calendar(file_location,year):
     workbookread = xlrd.open_workbook(file_location);
     sheetread = workbookread.sheet_by_index(0)
     i=6
@@ -647,8 +648,41 @@ def read_calendar(file_location):
             if(sheetread.cell_value(i,j) == 'P'):
                 k=k+1
                 s = 'batch '+ str(k) +' of ' + str(sheetread.cell_value(i,1)) + ' is on ' + str(sheetread.cell_value(5,j)) + '  ' + str(sheetread.cell_value(4,j - j%5))
+                start_date,stop_date = to_date(str(sheetread.cell_value(5,j)) , str(sheetread.cell_value(4,j - j%5)) , year)
+                course = Course.objects.get(course_name = str(sheetread.cell_value(i,1)) )
+                BatchDetails.objects.create()
                 print s
-
+def get_month(month):
+    if month.lower() == 'january':
+        return 1
+    if month.lower() == 'february':
+        return 2
+    if month.lower() == 'march':
+        return 3
+    if month.lower() == 'april':
+        return 4
+    if month.lower() == 'may':
+        return 5
+    if month.lower() == 'june':
+        return 6
+    if month.lower() == 'july':
+        return 7
+    if month.lower() == 'august':
+        return 8
+    if month.lower() == 'september':
+        return 9
+    if month.lower() == 'october':
+        return 10
+    if month.lower() == 'november':
+        return 11
+    if month.lower() == 'december':
+        return 12
+def to_date(week,month,year):
+    num = week[5]
+    num = int(num)
+    month = get_month(month)
+    if num == 1:
+        start_date = datetime(year,month )
 # k is the batch number
 # sheetread.cell_value(i,1) is the course name .. match it with the data base
 # sheetread.cell_value(5,j) is the week in which P is marked
@@ -663,7 +697,7 @@ from xlwt import*
 def make_l4pa9(batch , departments, trainers , grades ,file_location):
     trainerNames = []
     for trainer in trainers:
-        trainerNames.append(trainer.first_name + " " + trainer.last_name)
+        trainerNames.append(trainer.userObj.first_name + " " + trainer.userObj.last_name)
     wb = Workbook()
     for department in departments:
         wsheet = wb.add_sheet(department.dept_name)
@@ -758,10 +792,10 @@ def make_l4pa9(batch , departments, trainers , grades ,file_location):
         wsheet.write_merge(2,2,0,7,"Title of the Programme:" + batch.course.course_name, stylebody) ####
         wsheet.write_merge(2,2,8,14,"Faculty:" + ','.join(trainerNames) , stylebody)   ###
         wsheet.write_merge(3,3,0,7,"Date:" + str(datetime.datetime.today()) , stylebody)        ###
-        wsheet.write_merge(3,3,8,14,"Duration:" + batch.duration , stylebody)  ###
+        wsheet.write_merge(3,3,8,14,"Duration:" + batch.course.duration , stylebody)  ###
         wsheet.write_merge(4,4,0,14, "Nature of the programme:",styletitle)
-        wsheet.write_merge(5,5,0,7,"Technical:" + batch.course.technical, stylebody)   ###
-        wsheet.write_merge(5,5,8,14,"Behavioral:" + batch.course.behavioral , stylebody)    ###
+        wsheet.write_merge(5,5,0,7,"Technical:" , stylebody)   ###
+        wsheet.write_merge(5,5,8,14,"Behavioral:"  , stylebody)    ###
 
         wsheet.write_merge(6,7,0,14,"Objective of the Programme:" + batch.course.objective, stylebody)  ###
         wsheet.write_merge(8,8,0,14,"PART A", styletitle)
@@ -793,7 +827,7 @@ def make_l4pa9(batch , departments, trainers , grades ,file_location):
         wsheet.write_merge(17,17,11,14,"Probable date of retraining", styletitle)
         i=0
 
-        for i in range (1,4+1):
+        for i in range (1,len(grades)+1):
             wsheet.write_merge(17+i,17+i,0,0,i, styletitle)
             wsheet.write_merge(17+i,17+i,1,3,grades[i-1].employee.userObj.first_name + " " + grades[i-1].employee.userObj.last_name, styletitle) #name
             wsheet.write_merge(17+i,17+i,4,5,grades[i-1].pre_training, styletitle)    #pre-training assesment
@@ -818,7 +852,7 @@ def make_l4pa9(batch , departments, trainers , grades ,file_location):
 
 
     wb.save(file_location)
-    
+   
 # -*- coding: cp1252 -*-
 import xlrd
 import time

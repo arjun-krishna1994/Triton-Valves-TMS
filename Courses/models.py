@@ -17,7 +17,10 @@ class Course(models.Model):
     quality_improvement = models.TextField( null = True)
     reduction_time = models.TextField( verbose_name = 'Improvement in m/c uptime', null = True)
     reduction_wastage = models.TextField( verbose_name = 'Improvement in m/c uptime', null = True)
-    others = models.TextField( null = True)
+    technical = models.TextField( blank = True , null = True)
+    final = models.TextField( blank = True , null = True)
+    behavioral = models.TextField( blank = True , null = True)
+    others = models.TextField(blank = True , null = True)
     
     def __unicode__(self):
         return '%s  ' % (self.course_name )
@@ -26,6 +29,7 @@ class BatchDetails(models.Model):
     start_date = models.DateField(blank = True, null = True)
     actual_start_date = models.DateField(blank = True, null = True)
     stop_date = models.DateField(blank = True, null = True)
+    finish_date = models.DateField(blank = True, null = True)
     actual_stop_date = models.DateField(blank = True, null = True)
     start_time  = models.TimeField(blank = True, null = True)
     stop_time = models.TimeField(blank = True, null = True)

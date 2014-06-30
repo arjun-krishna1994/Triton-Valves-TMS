@@ -23,9 +23,10 @@ from django.http.response import HttpResponseForbidden
 from Users.userfunctions import get_trainer_list
 from Courses.functions import add_trainer_to_course, remove_trainer_from_course
 from Courses.forms import FileForm, YearForm, GradingForm, FeedbackForm,\
-    BatchForm, CourseAssignmentData, CourseForm
+    BatchForm, CourseAssignmentData, CourseForm, CourseBatchForm
 from Users.forms import EmployeeCourseData, CourseData
 from Users.views import determineAuthType, booleanize
+from django.forms.formsets import formset_factory
 # Create your views here.
 
 def emp_auth_needed(view_func):
@@ -79,12 +80,79 @@ def search_course(request):
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD):
         courses = functions.getCourseList(emp)
+        liste = []
+        for course in courses:
+            np = len(list(Users.models.CoursesToAttend.objects.filter(course = course)))
+            nt = len(get_trainer_list(course = course))
+            cad = CourseAssignmentData(course,np,nt)
+            liste.append(cad)
         t = get_template("coursesSearch.html")
-        c = Context({'courses':courses})
+        c = Context({'list':liste})
         return HttpResponse(t.render(c))
     else:
         return HttpResponseRedirect("../../../loggedin")
-    
+
+@emp_auth_needed
+def create_batches_for_course(request):
+    courseid = request.GET.get('courseid',None).encode('ascii','ignore')    
+    number  = request.GET.get('num',None).encode('ascii','ignore') 
+    if number is not None:
+        number = int(number)
+    else:
+        number = 0
+    if courseid is not None:
+        course = Course.objects.get(id = courseid)
+        batches = list(BatchDetails.objects.filter(course = course ,course_ongoing = False , course_completed = False ))
+    formset = modelformset_factory(BatchDetails, form = CourseBatchForm ,max_num = number , extra = number )
+    forms1 = formset(queryset = BatchDetails.objects.filter(id = 0))
+    for form in forms1:
+        form.fields['course'] = forms.ChoiceField(choices = ((course.id ,course.course_name),))
+    if request.POST:
+        forms1 = formset(request.POST)
+        if forms1.is_valid():
+            batches2 = list(forms1.save())
+            batches.extend(batches2)
+            t = get_template('courseBatchDetails.html')
+            np = len(list(Users.models.CoursesToAttend.objects.filter(course = course)))
+            nt = len(get_trainer_list(course = course))
+            cad = CourseAssignmentData(course,np,nt, batches)
+            c = Context({'liste': [cad]})
+            return HttpResponse(t.render(c))
+        else:
+            c = Context({'formset':forms1,'batches': batches})
+            return render_to_response('registerBatches.html', context_instance=RequestContext(request,c))
+    else:
+        return render_to_response('registerBatches.html', context_instance=RequestContext(request,{'formset':forms1,'batches':batches}))
+
+def view_calendar(request):  
+    try:
+        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+    except EmployeeInfo.DoesNotExist:
+        emp = None  
+    if emp is not None and (emp.is_Admin ):
+        if request.POST:
+            form = YearForm(request.POST)
+            if form.is_valid():
+                year = form.cleaned_data['year']
+                liste = []
+                t = get_template('courseBatchDetails.html')
+                for course in Course.objects.all():
+                    np = len(list(Users.models.CoursesToAttend.objects.filter(course = course)))
+                    nt = len(get_trainer_list(course = course))
+                    batches = list(BatchDetails.objects.filter(start_date__year = year))
+                    cad = CourseAssignmentData(course,np,nt, batches)
+                    liste.append(cad)
+                c = Context({'liste': liste})
+                return HttpResponse(t.render(c))
+            else:
+                c = Context({'form':form})
+                return render_to_response('registration.html', context_instance=RequestContext(request,c))
+        else:
+            form = YearForm()
+            c = Context({'form':form})
+            return render_to_response('registration.html', context_instance=RequestContext(request,c))           
+        
+    return HttpResponseRedirect('../../loggedin')      
 @emp_auth_needed
 def edit_course(request):
     try:

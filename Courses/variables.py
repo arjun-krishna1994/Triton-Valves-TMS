@@ -11,4 +11,5 @@ name_choices = (('L4PA1','L4PA1'),('L4PA2','L4PA2'),('L4PA3','L4PA3'),('L4PA4','
 year_choices = (('2014','2014'),)  
 for year in range(2015, 2060):
     year_choices = year_choices + ((str(year),str(year)),)
-    
+
+  

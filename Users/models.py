@@ -11,7 +11,7 @@ class Department(models.Model):
     
 class EmployeeInfo(models.Model):
     userObj = models.OneToOneField(User)
-    is_Manager = models.BooleanField(default = False ,verbose_name = 'Manager aka Supervisior aka Unit Incharge')
+    is_Manager = models.BooleanField(default = False ,verbose_name = 'Supervisor/Unit Incharge')
     is_Admin = models.BooleanField(default = False) 
     is_HOD = models.BooleanField(default = False)
     is_Staff = models.BooleanField(default = False)
@@ -68,11 +68,14 @@ class CoursesToAttend(models.Model):
     
 
  
-class Notification(models.Model):
-    employee = models.ForeignKey(EmployeeInfo)
-    message = models.CharField(max_length = 500)
-    dateTime = models.DateTimeField(null = True)
-    seen = models.BooleanField(default = False)
-  
-    
+
+
+class Message(models.Model):  
+    generated = models.CharField(max_length = 40)
+    message = models.TextField()
+    access_level = models.IntegerField()
+
+class Schedule(models.Model):
+    date = models.DateField()
+    message = models.ManyToManyField(Message)
     

@@ -1,8 +1,15 @@
-from Users.models import EmployeeInfo, Department
+from Users.models import EmployeeInfo, Department, Schedule
 from Users import models, EmployeeListReader
 from Courses import models as Cmodels
 from Courses.models import CoursewiseTrainer
 from django.contrib.auth.models import User
+import calendar_write
+
+from TritonValvesTraining import settings
+from django.core.files.base import File
+import Courses
+from shutil import copyfile
+import datetime
 
 def getEmployeeList(emp, course = 'None'):
     alldept = models.Department.objects.get(deptID = 'ALL')
@@ -47,13 +54,13 @@ def get_courses_to_attend(emp):
         liste = []
     return liste
 
-def get_notifications(emp):
-    try:
-        liste = list(models.Notification.objects.filter(employee = emp))
-    except models.Notification.DoesNotExist:
-        liste = []
-    return liste    
-
+def generate_notification(username , message , date ,accessLevel):
+    message = models.Message.objects.create(generated = username , message = message , access_level = accessLevel)
+    schedule = models.Schedule(date = date)
+    schedule.save()
+    schedule.message.add(message)
+    schedule.save()
+    
 def authorised_to_handle(handler , employee = None , batch = None , course = None):
     all_dept = Department.objects.get(deptID = 'ALL')
     flag = False
@@ -138,11 +145,43 @@ def create_workers_from_list(list_file_location,emp):
                     empList.append(empl)
     wl = WorkerList(errors,empList)
     return wl
+def generate_schedule(year,emp):
+    file_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' +  '/'.join(['FilesCreated', str(year), 'AC.xls'])
+    name = 'AC'
+    model_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' + '/'.join(['Files', str(year), name + ".xls"])
+    details = 'Schedule For the Year ' + str(year)
+    date_notification = []
+    for month in range(1,13):
+        date_notification.append(ScheduleMessages(month = month , year = year))
+    calendar_write.calendar_write(date_notification, year, file_location)
+    filer = File(open(file_location))
+    fileObj = Courses.models.Files.objects.create(name = name, details = details , file = filer ,  year = str(year))
+    model_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' + fileObj.file.name
+    copyfile(file_location,model_location)
+    fileObj.modifiedBy.add(emp)
+    fileObj.save()
+
+    return fileObj
+    
     
 class WorkerList():
     def __init__(self, errors , empList ):
         self.errors = errors
         self.empList = empList
+class ScheduleMessages():
+    def __init__(self,month,year):
+        self.month = month
+        self.year = year
+    def get_message_for_day(self,day):
+        try:
+            day_schedule = Schedule.objects.get(date = datetime.date(self.year,self.month,day))
+            messageObjs = list(day_schedule.message.all())
+            messages = []
+            for messageObj in messageObjs:
+                messages.append(messageObj.message)
+            return ','.join(messages)
+        except Schedule.DoesNotExist:
+            return ""
                 
             
             

@@ -8,13 +8,14 @@ function ajaxRequest()
 }
 function editDepartment(deptID)
 {
-alert("1");
 window.location = "../../editDept?deptID=" + deptID;
 
 
 }
 function deleteDepartment(deptID)
 {
+var r=confirm("Are you sure?");
+if (r==true) {
 var ajaxReq = ajaxRequest();
 ajaxReq.onreadystatechange = function(){  
 if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
@@ -25,6 +26,7 @@ if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
 }
 ajaxReq.open("GET", "../delDept?deptID=" + deptID,true);
 ajaxReq.send();
+}
 }
 </script>
 <p>

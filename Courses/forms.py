@@ -7,6 +7,7 @@ from django import forms
 from Courses.models import Grading, Feedback, BatchDetails, Course, Files
 from django.forms.extras.widgets import SelectDateWidget 
 from Courses import variables
+from Users import userfunctions
 class FeedbackForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FeedbackForm, self).__init__(*args, **kwargs) 
@@ -87,10 +88,11 @@ class CourseForm(forms.ModelForm):
         
         
 class CourseAssignmentData:
-    def __init__(self,course,NoPeople,NoTrainers):
+    def __init__(self,course,NoPeople,NoTrainers , batches = None):
         self.course = course
         self.np = NoPeople
         self.nt = NoTrainers  
+        self.batches = batches
         
 import re
 from django.forms.extras.widgets import SelectDateWidget
@@ -275,3 +277,25 @@ class BatchForm(forms.ModelForm):
         if not course.department == emp.department and not course.department.deptID == 'ALL' :
             return False
         return True
+    def save(self,*args,**kwargs):
+        batch = super(BatchForm,self).save(*args,**kwargs)
+        userfunctions.generate_notification(username = "Auto:", message = "Start The Batch for module " + batch.course.course_name +" on:" + str(batch.start_date), date = batch.start_date, accessLevel = 1)
+        userfunctions.generate_notification(username = "Auto:", message = "Stop The Batch for module " + batch.course.course_name +" on:" + str(batch.stop_date), date = batch.stop_date, accessLevel = 1)
+        return batch
+class CourseBatchForm(forms.ModelForm):
+
+    class Meta:
+        model = BatchDetails
+        widgets = {'start_date':SelectDateWidget() , 'stop_date': SelectDateWidget()  , 'start_time': SelectTimeWidget() , 'stop_time' : SelectTimeWidget() }
+        fields = ['start_date','stop_date','course','venue' ,'start_time','stop_time']
+    def clean_with_emp(self,emp):
+        cleaned_data = super(BatchForm, self).clean()
+        course = cleaned_data.get('course')
+        if not course.department == emp.department and not course.department.deptID == 'ALL' :
+            return False
+        return True
+    def save(self,*args,**kwargs):
+        batch = super(CourseBatchForm,self).save(*args,**kwargs)
+        userfunctions.generate_notification(username = "Auto:", message = "Start The Batch for module " + batch.course.course_name +" on:" + str(batch.start_date), date = batch.start_date, accessLevel = 1)
+        userfunctions.generate_notification(username = "Auto:", message = "Stop The Batch for module " + batch.course.course_name +" on:" + str(batch.stop_date), date = batch.stop_date, accessLevel = 1)
+        return batch

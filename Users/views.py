@@ -10,12 +10,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from Users.models import EmployeeInfo,Department , CoursesAttended,\
     CoursesToAttend
-from Courses.models import   BatchDetails,  Feedback,Grading,  CourseEmployeeList
+from Courses.models import   BatchDetails,  Feedback,Grading,  CourseEmployeeList,\
+    Course
 from Users import userfunctions
 from functools import wraps
 from Users.forms import  DepartmentForm, HODForm, ManagerForm, EmployeeEditForm, EmployeeForm, UserForm
 from django.contrib.admin.helpers import AdminForm
 from django.http.response import HttpResponseForbidden
+import Courses
+from Courses.forms import YearForm
 
 def emp_auth_needed(view_func):
     @login_required
@@ -287,6 +290,18 @@ def view_complete_emp(request):
     t = get_template('empDetails.html')
     c = Context({'emp':emp,'coursesAttended':coursesAttended,'coursesToAttend':coursesToAttend,'coursesAttending':coursesAttending})
     return HttpResponse(t.render(c))  
+@emp_auth_needed 
+def view_emp_grades(request):
+    empid = request.GET.get('empid', '').encode('ascii','ignore')
+    batchid =  request.GET.get('batchid', '').encode('ascii','ignore')
+    batch = BatchDetails.objects.get(id = batchid)
+    employee  = BatchDetails.objects.get(id = empid)
+    Grades = Grading.objects.get(employee = employee , batch = batch)
+    Feedback = Courses.models.Feedback.objects.get(employee = employee , batch = batch)
+    print Grades
+    t = get_template('graded.html')
+    c = Context({'list':[Grades,Feedback],'grading':True})
+    return HttpResponse(t.render(c))  
     
 @emp_auth_needed 
 def view_course_employee_details(request): 
@@ -474,5 +489,29 @@ def delete_department(request):
         dept.delete()
         vari = " The department " + deptname + " with ID" + deptID +' has been deleted.'
         return HttpResponse(vari) 
-    
-        
+@emp_auth_needed 
+def generate_schedule(request): 
+    try:
+        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+    except EmployeeInfo.DoesNotExist:
+        emp = None  
+    if emp is not None and (emp.is_Admin ):
+        if request.POST:
+            form = YearForm(request.POST)
+            if form.is_valid():
+                year = form.cleaned_data['year']
+                liste = []
+                message = "Here is the schedule ."
+                t = get_template('documentList.html')
+                liste = [userfunctions.generate_schedule(int(year), emp)]    
+                c = Context({'documents': liste})
+                return HttpResponse(t.render(c))
+            else:
+                c = Context({'form':form})
+                return render_to_response('registration.html', context_instance=RequestContext(request,c))
+        else:
+            form = YearForm()
+            c = Context({'form':form})
+            return render_to_response('registration.html', context_instance=RequestContext(request,c))   
+    else:
+        return HttpResponse("You are not authorised to view this.")   

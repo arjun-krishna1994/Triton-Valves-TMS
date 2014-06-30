@@ -18,7 +18,7 @@
 .notifications{
 	font-size: 28px;
 	font-weight: bold;
-	background-color: #FF0000;
+	background-color: #ff1919;
 	height: 400px;
 	padding: 30px;
 	padding-top: 0px;
@@ -64,7 +64,6 @@ color:inherit;
 .header {
 	font-size: 200%;
 	font-weight: bold;
-	background-color: #FF0000;
 	height: 7%;
 	padding-left: 50px;
 	top: 0%;
@@ -73,6 +72,7 @@ color:inherit;
 	box-shadow: 5px 5px 10px #888888;
 	position:fixed;
 	z-index:1000;
+	background-image: url("images/pattern.png");
 }	
 
 #links {
@@ -121,9 +121,10 @@ color:inherit;
 body {
   font: 13px/20px "Helvetica", Helvetica, Verdana, sans-serif;
   color: #CCC;
-  background:#fcfbdb;
+  background:#fcfcfc;
   background-repeat: no-repeat;
   background-position: right;
+  background-color:#FCFBDB;
 }
 #notify{
 		padding: 3px;
@@ -145,7 +146,7 @@ margin-top: 130px;
 margin-top: 130px;
 }
 th {
-background-color : #ff0000;
+background-color : #ff1919;
 color: white;
 }
 td, th {
@@ -168,7 +169,7 @@ td{
 }
 #row_head{
 	font-size: 20px;
-	background-color:#ff0000;
+	background-image: url("images/pattern.png");
 	color: #ffffff;
 	margin:0px;
 	text-align:center;
@@ -178,6 +179,7 @@ td{
 #row{
 border: solid 1px red;
 margin: 0px;
+
 }
 #row a{
 	margin-left:5px;
@@ -187,10 +189,11 @@ margin: 0px;
 #row div{
 display:inline-block;
 margin-right: 130px;
+
 }
 #names{
 width:180px;
-background-color: #ff0000;
+background-color: #ff1919;
 color: #ffffff;
 text-align:left;
 padding: 7px;

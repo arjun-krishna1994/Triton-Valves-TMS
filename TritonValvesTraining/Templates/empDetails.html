@@ -3,7 +3,11 @@
 <script>
 function viewDetails(batchid)
 {
-window.location = "../../viewBatch?batchid=" + batchid
+window.location = "../../viewBatch?batchid=" + batchid;
+}
+function viewGF(batchid)
+{
+window.location = "../../viewGF?batchid=" + batchid + "&empid=" + {{emp.id}};
 }
 </script>
 <table>
@@ -54,7 +58,7 @@ window.location = "../../viewBatch?batchid=" + batchid
 	<th>Batch Details	 </th>
 	<th>Grades & Feedback	 </th>
 </tr>
-{% for record in coursesAttened %}
+{% for record in coursesAttended %}
 <tr>
 <td> {{record.batch.course.course_name}} </td>
 <td> <input type = "button"  value = "Details" onclick = "viewDetails('{{record.batch.id}}')" > </td>	

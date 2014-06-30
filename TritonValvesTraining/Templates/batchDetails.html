@@ -1,6 +1,111 @@
 {% extends "base.html" %}
 {% block content %}
 
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editRecord(ID)
+{
+parent.window.location = "../../editEB?id=" + ID;
+
+
+}
+function viewDocuments(ID)
+{
+parent.window.location = "../../downBatchFiles?id=" + ID;
+
+
+}
+function uploadDocuments(ID)
+{
+parent.window.location = "../../uploadBatchFiles?id=" + ID;
+
+
+}
+function employeeList(ID)
+{
+parent.window.location = "../../mainBatchEmpAssignment?batchid=" + ID;
+
+
+}
+function trainerList(ID)
+{
+parent.window.location = "../../ttbMain?batchid=" + ID;
+
+
+}
+
+
+function completeBatch(ID)
+{
+var r=confirm("Are you sure?");
+if (r==true) {
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../completeBatch?id=" + ID ,true);
+ajaxReq.send();
+}
+}
+function stopBatch(ID)
+{
+var r=confirm("Are you sure?");
+if (r==true) {
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../stopBatch?id=" + ID ,true);
+ajaxReq.send();
+}
+}
+function startBatch(ID)
+{
+var r=confirm("Are you sure?");
+if (r==true) {
+
+
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../startBatch?id=" + ID ,true);
+ajaxReq.send();
+}
+}
+function doGrading(ID)
+{
+parent.window.location = "../../doGrading?batchid=" + ID;
+
+
+}
+function doFeedback(ID)
+{
+parent.window.location = "../../doFeedback?batchid=" + ID;
+
+
+}
+</script>
 <table > 
 <tr>
 	<th>Course Name</th>
