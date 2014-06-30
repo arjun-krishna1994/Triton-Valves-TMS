@@ -111,9 +111,5 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'testing@example.com'"""
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'arjunthegreat420@gmail.com'
-EMAIL_HOST_PASSWORD = 'Counter1.6'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+
 AUTH_PROFILE_MODULE = 'Users.EmployeeInfo'
