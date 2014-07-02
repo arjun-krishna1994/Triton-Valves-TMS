@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'Courses',
     'Users',
-    'south',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -119,10 +118,6 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'testing@example.com'"""
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'arjun.krishna1994@gmail.com'
-EMAIL_HOST_PASSWORD = 'spiderman123'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+
 AUTH_PROFILE_MODULE = 'Users.EmployeeInfo'
 
