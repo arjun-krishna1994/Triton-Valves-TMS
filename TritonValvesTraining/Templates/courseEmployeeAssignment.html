@@ -43,7 +43,7 @@ alert("Employees Registered");
 	
 {% csrf_token %}
 	<td> {{item.emp.userId}} <input type = "hidden" value = "{{item.emp.userId}}" name = "userId">	</td>
-	<td>{{item.emp.userObj.first_name}} {{item.emp.userObj.last_name}}	</td>
+	<td>{{item.emp.user.first_name}} {{item.emp.user.last_name}}	</td>
 	<td>{{item.emp.department.dept_name}} 	</td>
 	{% for course in item.coursedata %}
 	<td> <input type = "checkbox" name ="{{item.emp.userId}}{{course.course_id}}"  value = "true" {{course.checked}}> </td>

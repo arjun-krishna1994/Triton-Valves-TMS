@@ -62,7 +62,7 @@ ajaxReq.send();
 <tr>
 	<td> {{forloop.counter }}	</td>	
 	<td> {{item.userId}}	</td>
-	<td>{{item.userObj.first_name}} {{item.userObj.last_name}}	</td>
+	<td>{{item.user.first_name}} {{item.user.last_name}}	</td>
 	<td> {{item.department.dept_name}}</td>
 	<td> {{item.designation}}</td>
 	<td><input type = "button" value = "View" onclick = "viewEmployee('{{item.id}}')"> </td>

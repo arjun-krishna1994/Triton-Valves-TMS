@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function ajaxRequest()
+{
+"use strict";
+ return new XMLHttpRequest();
+}
+function editCourse(courseID)
+{
+window.location = "../../editCourse?course_id=" + courseID;
+
+
+}
+function createBatches(courseID)
+{
+var number = document.getElementById(courseID).value;
+window.location = "../../createBatches?courseid=" + courseID + "&num=" + number;
+
+
+}
+function deleteCourse(courseID)
+{
+var ajaxReq = ajaxRequest();
+ajaxReq.onreadystatechange = function(){  
+if(ajaxReq.readyState === 4 && ajaxReq.status === 200)
+			{
+				alert(ajaxReq.responseText);
+				window.location = window.location;
+			}
+}
+ajaxReq.open("GET", "../delCourse?course_id=" + courseID,true);
+ajaxReq.send();
+}
+</script>
+<div class="added" style = "margin-left:0px; ">
+<table width="100%" style = "font-size:13px;"> 
+<tr>
+	<th>Module Name</th>
+	<th>Department </th>
+	<th>No. Of Employees</th>
+	<th>No. Of Trainers </th>
+	<th> Duration. </th>
+	<th> Batches
+	<table style = "margin: 0px; border:none;">
+	<tr >
+		<th><pre>SL No.	</pre></th>
+		<th><pre>Start Date / Actual		</pre></th>
+		<th><pre>Stop Date / Actual 		</pre></th>
+		<th><pre>Completion Date	</pre></th>
+		<th><pre>Timings		</pre></th>
+		</tr>
+	</table>
+	</th>
+</tr>
+{% for item in liste %}
+<tr >
+	<td> <a  onclick = "editCourse('{{item.course.course_id}}')" >{{item.course.course_name}} </a></td>
+	<td>{% for dept in item.course.department.all %}
+	{{dept.dept_name}}
+	{% endfor %}
+	</td>
+	<td><a href = "../../cead?id={{item.course.id}}">{{item.np}} </a></td>
+	<td>{{item.nt}}</td>
+	<td>{{item.course.duration}}</td>
+	<td>
+	<table style = "margin: 0px; border:none;">
+		
+		{% for batch in item.batches %}
+		<tr> 
+		<td> <pre>{{forloop.counter}}	</pre></td>
+		<td> <pre>{{batch.start_date}} / {{batch.actual_start_date}} 		</pre></td>
+		<td> <pre>{{batch.stop_date}} / {{batch.actual_stop_date}} 		</pre></td>
+		<td> <pre>{{batch.finish_date}}		</pre></td>
+		<td> <pre>{{batch.start_time}} to {{batch.stop_time}}	</pre> </td>
+		</tr>
+		{% endfor %}
+	</table>
+	</td>
+
+
+</tr>
+{% endfor %}
+</table>
+<p> <a href = "../../../loggedin"> Go Back </a> </p>
+</div>
+{% endblock %}

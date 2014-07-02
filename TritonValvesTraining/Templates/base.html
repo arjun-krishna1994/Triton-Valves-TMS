@@ -1,7 +1,10 @@
+<!DOCTYPE html PUBLIC “-//W3C//DTD HTML 4.01 Transitional//EN”
+“http://www.w3.org/TR/html4/loose.dtd”>
 <html>
 <head>
 	{% load static from staticfiles  %}
 	{% load staticfiles %}
+	<meta http-equiv=”Content-Type” content=”text/html; charset=ISO-8859-1”>
 <title>
 Triton Valves
 
@@ -24,8 +27,9 @@ Triton Valves
 	color: red;
 	width:60%;
 	top: 0%;
-	left:20%;
+	left:0%;
 }
+
 
 </style>
 <script type="text/javascript">
@@ -44,11 +48,69 @@ setInterval(ticker, 3000);
 <p>
 <div class="header">
 	<div id="options">
+			<a class="option" href = "../../accounts/password_change/" >Change Password </a>
+			<a class="option" href = "../../logout" > Logout </a>
+			</div>
+	<div id= "tms">	<a href = "../../loggedin" > Training Management System </a></div>
+</div>
+
+{% if emp1.is_Admin %}
+
+<div class="header">
+	<div id="options">
+			<a class="option" href = "../../accounts/password_change/" > Change Password </a>
+			<a class="option" href = "../../logout" > Logout </a>
+			</div>
+	<div id= "tms">	
+	<ul id = "menu" >
+	<a href = "../../loggedin" ><img src = "{% static "images/homeicon.png" %}" width ="5%" height = "50%"/></a>
+	<li>Training Management System
+	<ul class = "sub-menu" >
+	<li> <a href = "" >Employees and Organization </a>
+		<ul class = "sub-menu1" >
+		<li><pre>Worker		<a href = "../../registerUser?empType=registerEmployee">Add</a>	<a href= "../../searchPage?w=True">Edit</a></pre></li>
+		<li><pre>HOD		<a href = "../../registerUser?empType=registerHOD">Add</a>	<a href= "../../searchPage?h=True">Edit</a></pre></li>
+		<li><pre>Manager		<a href = "../../registerUser?empType=registerManager">Add</a>	<a href= "../../searchPage?m=True">Edit</a></pre></li>
+		<li><pre>Admin		<a href = "../../registerUser?empType=registerAdmin">Add</a>	<a href= "../../searchPage?a=True">Edit</a></pre></li>
+		<li><pre>Department	<a href = "../../createDepartment">Add</a>	<a href = "../../searchDept">Edit</a></pre></li>
+		</ul>
+	</li>
+	<li> Modules <br>
+		<ul class = "sub-menu1" style="width: 200%;" >
+		<li><pre>Modules		<a href = "../../createCourse" >Add</a>	<a href = "../../searchCourse">Edit</a></pre></li>
+		<li><pre>Trainers	<a href = "../../ttcMain">Assign</a></pre></li>
+		<li><pre>Employee List	<a href = "../../maincea">Assign</a>	<a href = "../../mcead">View</a></pre></li>
+		<li><pre>Batches		<a href = "../../assb">Add</a>	<a href = "../../essb">Edit</a></pre></li>
+		</ul>		
+	</li>
+	<li> Annual Documents
+		<ul class = "sub-menu1"  style="width: 200%;">
+		<li><pre>Calendar		<a href = "../../getCalendarTemplate" >Download</a>	<a href = "../../viewCalendar">View</a></pre></li>
+		<li><pre>Indent			<a href = "../../indentGenerator">Download</a></pre></li>
+		<li><pre>Schedule			<a href = "../../viewSchedule">Download</a></pre></li>
+		<li><pre>All Documents		<a href = "../../uploadFile">Upload</a>		<a href = "../../searchFiles">Download</a></pre></li>
+		<li><pre>Employee List Reader 	<a href = "../../employeeListReader">Upload</a>		<a href = "../../employeeListTemplate">Download</a></pre></li>
+		</ul>
+	</li>
+	<li><a href= "../../searchPage" > Search Employees </a></li>
+	</ul>
+	</li>
+	</ul>
+	</div>
+</div>
+
+{% else %}
+<div class="header">
+	<div id="options">
 			<a class="option" href = "../../accounts/password_change/" > Change Password </a>
 			<a class="option" href = "../../logout" > Logout </a>
 			</div>
 	<div id= "tms">	<a href = "../../loggedin" > Training Management System </a></div>
 </div>
+
+{% endif %}
+
+
 </p>
 {% block content %}
 {% endblock %}

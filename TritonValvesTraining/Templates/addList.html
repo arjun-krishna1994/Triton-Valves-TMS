@@ -1,4 +1,6 @@
-
+{% load static from staticfiles  %}
+	{% load staticfiles %}
+<link type="text/css" rel="stylesheet" href="{% static "TMS_header.css" %}"/>
 <script>
 function ajaxRequest()
 {
@@ -39,8 +41,8 @@ ajaxReq.send();
 {% for item in list %}
 <tr id = "{{item.id}}" >
 	<td>{{item.userId}}</td>
-	<td>{{item.userObj.first_name}}  {{item.userObj.last_name}} </td>
-	<td>{{item.userObj.username}}</td>
+	<td>{{item.user.first_name}}  {{item.user.last_name}} </td>
+	<td>{{item.user.username}}</td>
 
 	<td> <input type = "button"  value = "Add" onclick = "assttc('{{item.id}}')" > </td>
 

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<p> Employees Assigned </p>
+<div id= "emp_ass" style = "float:left; margin: 10%; margin-top:5%; color:red;">
+<h2> Employees Assigned </h2>
 <table> 
 <tr>
 	<th>Employee ID</th>
@@ -9,24 +10,26 @@
 {% for employee in employees %}
 <tr>
 	<td>{{employee.userId}}</td>
-	<td>{{employee.userObj.first_name}} {{employee.userObj.last_name}} </td>
+	<td>{{employee.user.first_name}} {{employee.user.last_name}} </td>
 
 </tr>
 {% endfor %}
 </table>
-
-<p> Trainers Assigned </p>
-<table> 
+</div>
+<div id = "train_ass" style = "float:left; margin: 10%;  margin-top:5%; color:red;">
+<h2> Trainers Assigned </h2>
+<table > 
 <tr>
-	<th>Employee ID</th>
-	<th>Employee Name </th>
+	<th>Trainer ID</th>
+	<th>Trainer Name </th>
 </tr>
 {% for employee in trainers %}
 <tr>
 	<td>{{employee.userId}}</td>
-	<td>{{employee.userObj.first_name}} {{employee.userObj.last_name}} </td>
+	<td>{{employee.user.first_name}} {{employee.user.last_name}} </td>
 
 </tr>
 {% endfor %}
 </table>
+</div>
 {% endblock %}

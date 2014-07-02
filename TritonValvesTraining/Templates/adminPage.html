@@ -1,30 +1,46 @@
 {% extends "base.html" %}
 {% block content %} 
 	{% load static from staticfiles  %}
-	{% load staticfiles %}2
+	{% load staticfiles %}
+<script>
+function func_admin( str ){
+	var element = document.getElementById(str+'_list');
+	if(element.style.display != "none"){
+		document.getElementById(str + "_list").style.visibility="hidden"
+		document.getElementById(str +"_list").style.display= "none"
+	}
+	else{
+		document.getElementById(str +'_list').style.visibility="visible"
+		document.getElementById(str +"_list").style.display= "block"
+	}
+}
+</script>
 <div class="notifications">
 	<p> Notifications </p>
 	<div class="notification_container">
 		<p>
    <ul id="ticker">
-        <li id="notify">Test Notification 1</li> 
-        <li id = "notify">Test Notification 2</li> 
-        <li id= "notify">Test Notification 3</li> 
+   {% for notification in notifications %}
+        <li id="notify">{{notification}}</li> 
+
+	{% endfor %}
 	</ul>
 </p>
+<p> <a href = "../../viewSchedule">View All Notifications </a> </p>
 	</div>
 </div>
-
 
 <div class="mainbody">
 <div id="welcome">
-<p> Welcome Mr/Mrs.  {{first_name}}  {{last_name}} </p>
+<p> Welcome Mr/Mrs.  {{first_name}}  {{last_name}} "{{request.user.get_profile.current_shift}}"</p>
 <p> {{ deptName }} </p>
 </div>
 {% if Admin %}
-	<div id = "row_head">
-		<p> <a href= "../../searchPage" > EMPLOYEES </a> AND ORGANIZATION</p>
+
+	<div id = "row_head" onclick = "func_admin('eao')">
+		<p> <a>EMPLOYEES AND ORGANIZATION</a></p>
 	</div>
+<div id = "eao_list" style = " display: none;" >
 <div id = "row">
 	<div id="names">
 		<a href= ""> Worker </a>
@@ -84,11 +100,11 @@
 		<a href = "../../searchDept"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
 	</div>	
 </div>
-
-<div id = "row_head">
-		<p> MODULES</p>
+</div>
+<div id = "row_head" onclick = "func_admin('m')">
+		<p> <a>MODULES</a></p>
 	</div>
-	
+<div id = "m_list" style = " display: none;" >
 <div id="row">
 	<div id="names">	
 		<a href = "../../searchCourse"> Modules </a>
@@ -103,10 +119,10 @@
 
 <div id="row">
 	<div id="names">	
-		<a href = "../../ttcMain"> Trainers </a>
+		<a href = "../../ttcMain"> Assign Trainers </a>
 	</div>
 	<div>
-		<a href = "../../ttcMain"><img style = "margin-left : 100px;"src = "{% static 'images/change.png' %}" width="85" height="30"></a>
+		<a href = "../../ttcMain" Class = "Download" style = "margin-left:110%;" >Assign</a>
 	</div>
 	<div>
 	</div>
@@ -115,13 +131,13 @@
 
 <div id="row">
 	<div id="names">	
-		<a href = "#"> Employees Assigned </a>
+		<a href = "#"> Assign Employees </a>
 	</div>
 	<div>
-		<a href = "../../maincea"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../maincea" class = "Download">Assign</a>
 	</div>
 	<div>
-		<a href = "../../mcead"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+		<a href = "../../mcead" Class = "Upload" >View</a>
 	</div>
 </div>
 <div id="row">
@@ -135,18 +151,20 @@
 		<a href = "../../essb"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
 	</div>
 </div>
-<div id = "row_head">
-		<p> ANNUAL DOCUMENTS </p>
-	</div>
-<div id="row">
+</div>
+<div id = "row_head" onclick = "func_admin('ad')">
+		<p> <a>ANNUAL DOCUMENTS</a> </p>
+</div>
+<div id = "ad_list" style = " display: none;" >
+<div id ="row">
 	<div id="names">	
 		<a href = "#"> Calendar </a>
 	</div>
 	<div>
-		<a href = "../../getCalendarTemplate"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../getCalendarTemplate" class = "Download">Download</a>
 	</div>
 	<div>
-		<a href = "../../viewCalendar"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+		<a href = "../../viewCalendar" class = "Upload">View</a>
 	</div>
 </div>
 
@@ -155,32 +173,35 @@
 		<a href = "#"> Indent </a>
 	</div>
 	<div>
-		<a href = "../../indentGenerator"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../indentGenerator" class = "Download" style = "margin-left: 110%;">Download</a>
 	</div>
-	<div>
-		<a href = "#"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
-	</div>
+	
 </div>
 <div id="row">
 	<div id="names">	
 		<a href = "#"> Schedule </a>
 	</div>
 	<div>
-		<a href = "../../viewSchedule"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../viewSchedule" class = "Download" style = "margin-left: 110%;">Download</a>
 	</div>
-	<div>
-		<a href = "../../viewSchedule"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
-	</div>
+	
 </div>
+
+</div>
+
+<div id = "row_head" onclick = "func_admin('msc')">
+		<p> <a> MISCELLANEOUS</a> </p>
+</div>
+<div id = "msc_list" style = " display: none;" >
 <div id="row">
 	<div id="names">	
-		<a href = "#"> All Documents </a>
+		<a href = "#"> Documents </a>
 	</div>
 	<div>
-		<a href = "../../uploadFile"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../uploadFile" class = "Upload">Upload</a>
 	</div>
 	<div>
-		<a href = "../../searchFiles"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+		<a href = "../../searchFiles" class = "Download">Downloads</a>
 	</div>
 
 </div>	
@@ -189,14 +210,14 @@
 		<a href = "#"> Employee List Reader</a>
 	</div>
 	<div>
-		<a href = "../../employeeListReader"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../employeeListReader" class = "Upload"> Upload </a>
 	</div>
 	<div>
-		<a href = "../../employeeListReader"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+		<a href = "../../employeeListTemplate" class = "Download">Download</a>
 	</div>
 
 </div>	
-
+</div>
 <div id = "row_head">
 		<p> <a href= "../../searchPage" > SEARCH EMPLOYEES </a> </p>
 	</div>
@@ -244,10 +265,14 @@
 	</div>
 <div id="row">
 	<div id="names">	
-		<a href = "../../viewCalendar"> Calendar </a>
+		<a href = "#"> Calendar </a>
+	</div>
+
+	<div>
+		<a href = "../../modifyCalendar" class = "Download"><img src = "{% static 'images/change.png' %}" width="85" height="30"></a>
 	</div>
 	<div>
-		<a href = "../../modifyCalendar"><img style = "margin-left : 100px;" src = "{% static 'images/change.png' %}" width="85" height="30"></a>
+		<a href = "../../viewCalendar" class = "Upload">View</a>
 	</div>
 	<div>
 	</div>
@@ -258,10 +283,7 @@
 		<a href = "#"> Indent </a>
 	</div>
 	<div>
-		<a href = "../../generateTI"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
-	</div>
-	<div>
-		<a href = "#"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+		<a href = "../../generateTI"><img style = "margin-left:100%;" src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
 	</div>
 </div>
 <div id="row">
@@ -295,9 +317,10 @@
 {% endif %}
 {% if HOD %}
 
-<div id = "row_head">
-		<p> <a href= "../../searchPage" > EMPLOYEES </a> AND ORGANIZATION</p>
+<div id = "row_head" onclick = "func_admin('eaoh')">
+		<p> EMPLOYEES AND ORGANIZATION</p>
 	</div>
+<div id = "eaoh_list" style = " display: none;" >
 <div id = "row">
 	<div id="names">
 		<a href= ""> Worker </a>
@@ -321,12 +344,12 @@
 		<a href= "../../searchPage?w=True"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
 	</div>		
 </div>
+</div>
 
-
-<div id = "row_head">
+<div id = "row_head" onclick = "func_admin('mh')">
 		<p> MODULES</p>
 	</div>
-	
+<div id = "mh_list" style = " display: none;" >
 <div id="row">
 	<div id="names">	
 		<a href = "../../searchCourse"> Modules </a>
@@ -353,15 +376,16 @@
 
 <div id="row">
 	<div id="names">	
-		<a href = "#"> Employees Assigned </a>
+		<a href = "#"> Assign Employees </a>
 	</div>
 	<div>
-		<a href = "../../maincea"><img src = "{% static 'images/add.jpg' %}" width="80" height="30"></a>
+		<a href = "../../maincea" class = "Download">Assign</a>
 	</div>
 	<div>
-		<a href = "../../mcead"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
+		<a href = "../../mcead" Class = "Upload" >View</a>
 	</div>
 </div>
+
 <div id="row">
 	<div id="names">	
 		<a href = "#"> Batches </a>
@@ -373,9 +397,8 @@
 		<a href = "../../essb"><img src = "{% static 'images/edit.png' %}" width="40" height="30"></a>
 	</div>
 </div>
-<div id = "row_head">
-		<a href = "../../viewCalendar"><p> View Calendar </p></a>
-	</div>
+</div>
+
 <div id = "row_head">
 		<p> <a href= "../../searchPage" > Search Employees </a> </p>
 	</div>
