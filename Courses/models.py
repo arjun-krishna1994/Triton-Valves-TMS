@@ -7,20 +7,20 @@ from django.dispatch import receiver
 #model everything with courses not batches
 
 class Course(models.Model):
-    course_name = models.CharField(max_length = 30, unique = True)
-    course_id = models.CharField(unique = True,max_length = 30)
-    duration = models.CharField(max_length = 10)
-    objective = models.CharField(max_length = 400)
-    misc_Details = models.CharField(max_length = 600)
+    course_name = models.CharField(max_length = 30, unique = True ,verbose_name = "Module Name")
+    course_id = models.CharField(unique = True,max_length = 30,verbose_name = "Module ID")
+    duration = models.CharField(max_length = 10,blank = True)
+    objective = models.CharField(max_length = 400,blank = True)
+    misc_Details = models.CharField(max_length = 600,blank = True)
     department = models.ManyToManyField('Users.Department', blank = True, null = True)
-    productivity = models.TextField( null = True)
-    quality_improvement = models.TextField( null = True)
-    reduction_time = models.TextField( verbose_name = 'Improvement in m/c uptime', null = True)
-    reduction_wastage = models.TextField( verbose_name = 'Improvement in m/c uptime', null = True)
-    technical = models.TextField( blank = True , null = True)
-    final = models.TextField( blank = True , null = True)
-    behavioral = models.TextField( blank = True , null = True)
-    others = models.TextField(blank = True , null = True)
+    productivity = models.BooleanField(default = False )
+    quality_improvement = models.BooleanField(default = False  )
+    reduction_time = models.BooleanField( verbose_name = 'Improvement in m/c uptime',default = False )
+    reduction_wastage = models.BooleanField( verbose_name = 'Wastage Reduction',default = False )
+    technical = models.BooleanField(default = False  )
+    behavioral = models.BooleanField( default = False )
+    others = models.BooleanField(default = False )
+    others_details = models.TextField(blank = True , null = True)
     
     def __unicode__(self):
         return '%s  ' % (self.course_name )

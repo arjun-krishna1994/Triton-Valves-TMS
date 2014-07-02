@@ -60,7 +60,7 @@ class GradingForm(forms.ModelForm):
 
         
 class YearForm(forms.Form):    
-    year = forms.ChoiceField(widget = forms.Select, choices = variables.year_choices ,help_text= " Make sure you only use this page to get the calendar template at the start of the year , if you want the most current calendar  use the get current calendar link in your home page.")
+    year = forms.ChoiceField(widget = forms.Select, choices = variables.year_choices ,help_text= " Enter the year you want to see the document for.")
 
 class FileForm(forms.ModelForm):
     class Meta:
@@ -279,7 +279,7 @@ class BatchForm(forms.ModelForm):
         return True
     def save(self,*args,**kwargs):
         batch = super(BatchForm,self).save(*args,**kwargs)
-        userfunctions.generate_notification(username = "Auto:", message = "Start The Batch for module " + batch.course.course_name +" on:" + str(batch.start_date), date = batch.start_date, accessLevel = 1)
+        userfunctions.generate_notification(username = "Auto:", message = "Start The Batch for module " + batch.course.course_name +" on:" + str(batch.start_date), date = batch.start_date, accessLevel = 1 , code= "BST" + batch.id)
         userfunctions.generate_notification(username = "Auto:", message = "Stop The Batch for module " + batch.course.course_name +" on:" + str(batch.stop_date), date = batch.stop_date, accessLevel = 1)
         return batch
 class CourseBatchForm(forms.ModelForm):

@@ -8,192 +8,66 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Course'
-        db.create_table(u'Courses_course', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('course_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
-            ('course_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
-            ('duration', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('objective', self.gf('django.db.models.fields.CharField')(max_length=400)),
-            ('misc_Details', self.gf('django.db.models.fields.CharField')(max_length=600)),
-            ('productivity', self.gf('django.db.models.fields.TextField')(null=True)),
-            ('quality_improvement', self.gf('django.db.models.fields.TextField')(null=True)),
-            ('reduction_time', self.gf('django.db.models.fields.TextField')(null=True)),
-            ('reduction_wastage', self.gf('django.db.models.fields.TextField')(null=True)),
-            ('technical', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('final', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('behavioral', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('others', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'Courses', ['Course'])
+        # Deleting field 'Course.final'
+        db.delete_column(u'Courses_course', 'final')
 
-        # Adding M2M table for field department on 'Course'
-        m2m_table_name = db.shorten_name(u'Courses_course_department')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('course', models.ForeignKey(orm[u'Courses.course'], null=False)),
-            ('department', models.ForeignKey(orm[u'Users.department'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['course_id', 'department_id'])
+        # Adding field 'Course.others_details'
+        db.add_column(u'Courses_course', 'others_details',
+                      self.gf('django.db.models.fields.TextField')(null=True, blank=True),
+                      keep_default=False)
 
-        # Adding model 'BatchDetails'
-        db.create_table(u'Courses_batchdetails', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('start_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('actual_start_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('stop_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('finish_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('actual_stop_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('start_time', self.gf('django.db.models.fields.TimeField')(null=True, blank=True)),
-            ('stop_time', self.gf('django.db.models.fields.TimeField')(null=True, blank=True)),
-            ('course', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.Course'])),
-            ('venue', self.gf('django.db.models.fields.CharField')(max_length=50, blank=True)),
-            ('course_completed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('course_ongoing', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('course_finished', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'Courses', ['BatchDetails'])
 
-        # Adding M2M table for field files on 'BatchDetails'
-        m2m_table_name = db.shorten_name(u'Courses_batchdetails_files')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('batchdetails', models.ForeignKey(orm[u'Courses.batchdetails'], null=False)),
-            ('files', models.ForeignKey(orm[u'Courses.files'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['batchdetails_id', 'files_id'])
+        # Changing field 'Course.reduction_wastage'
+        db.alter_column(u'Courses_course', 'reduction_wastage', self.gf('django.db.models.fields.BooleanField')())
 
-        # Adding model 'Attendance'
-        db.create_table(u'Courses_attendance', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('course', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.Course'])),
-            ('batch', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.BatchDetails'], null=True)),
-            ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Users.EmployeeInfo'])),
-            ('shift', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-        ))
-        db.send_create_signal(u'Courses', ['Attendance'])
+        # Changing field 'Course.technical'
+        db.alter_column(u'Courses_course', 'technical', self.gf('django.db.models.fields.BooleanField')())
 
-        # Adding model 'CourseEmployeeList'
-        db.create_table(u'Courses_courseemployeelist', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('course', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.Course'])),
-            ('batch', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.BatchDetails'], null=True, blank=True)),
-            ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Users.EmployeeInfo'])),
-        ))
-        db.send_create_signal(u'Courses', ['CourseEmployeeList'])
+        # Changing field 'Course.reduction_time'
+        db.alter_column(u'Courses_course', 'reduction_time', self.gf('django.db.models.fields.BooleanField')())
 
-        # Adding model 'CoursewiseTrainer'
-        db.create_table(u'Courses_coursewisetrainer', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('course', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.Course'])),
-            ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Users.EmployeeInfo'])),
-        ))
-        db.send_create_signal(u'Courses', ['CoursewiseTrainer'])
+        # Changing field 'Course.others'
+        db.alter_column(u'Courses_course', 'others', self.gf('django.db.models.fields.BooleanField')())
 
-        # Adding model 'BatchwiseTrainer'
-        db.create_table(u'Courses_batchwisetrainer', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('batch', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.BatchDetails'])),
-            ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Users.EmployeeInfo'])),
-        ))
-        db.send_create_signal(u'Courses', ['BatchwiseTrainer'])
+        # Changing field 'Course.quality_improvement'
+        db.alter_column(u'Courses_course', 'quality_improvement', self.gf('django.db.models.fields.BooleanField')())
 
-        # Adding model 'Grading'
-        db.create_table(u'Courses_grading', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('batch', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.BatchDetails'])),
-            ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Users.EmployeeInfo'])),
-            ('pre_training', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=3, decimal_places=2, blank=True)),
-            ('post_training', self.gf('django.db.models.fields.DecimalField')(default=0, max_digits=3, decimal_places=2, blank=True)),
-            ('retraning_needed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('probable_date_of_retraining', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('misc_data', self.gf('django.db.models.fields.CharField')(default='', max_length=150, blank=True)),
-        ))
-        db.send_create_signal(u'Courses', ['Grading'])
+        # Changing field 'Course.behavioral'
+        db.alter_column(u'Courses_course', 'behavioral', self.gf('django.db.models.fields.BooleanField')())
 
-        # Adding model 'Feedback'
-        db.create_table(u'Courses_feedback', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('batch', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Courses.BatchDetails'], null=True)),
-            ('employee', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Users.EmployeeInfo'])),
-            ('expectations_met', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=3, decimal_places=2, blank=True)),
-            ('reasons_not_met', self.gf('django.db.models.fields.CharField')(max_length=300, null=True)),
-            ('pre_training', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=3, decimal_places=2, blank=True)),
-            ('post_training', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=3, decimal_places=2, blank=True)),
-            ('training_methodology', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('use_of_AV_techniques', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('quality_of_courseMaterial', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('aoth', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('opinion', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('subject_knowledge', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('presentation_skills', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('communication_skills', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('iwp', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('suggestions', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'Courses', ['Feedback'])
-
-        # Adding model 'Files'
-        db.create_table(u'Courses_files', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('year', self.gf('django.db.models.fields.CharField')(max_length=4)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
-            ('details', self.gf('django.db.models.fields.CharField')(max_length=150)),
-            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-        ))
-        db.send_create_signal(u'Courses', ['Files'])
-
-        # Adding M2M table for field modifiedBy on 'Files'
-        m2m_table_name = db.shorten_name(u'Courses_files_modifiedBy')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('files', models.ForeignKey(orm[u'Courses.files'], null=False)),
-            ('employeeinfo', models.ForeignKey(orm['Users.employeeinfo'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['files_id', 'employeeinfo_id'])
-
+        # Changing field 'Course.productivity'
+        db.alter_column(u'Courses_course', 'productivity', self.gf('django.db.models.fields.BooleanField')())
 
     def backwards(self, orm):
-        # Deleting model 'Course'
-        db.delete_table(u'Courses_course')
+        # Adding field 'Course.final'
+        db.add_column(u'Courses_course', 'final',
+                      self.gf('django.db.models.fields.TextField')(null=True, blank=True),
+                      keep_default=False)
 
-        # Removing M2M table for field department on 'Course'
-        db.delete_table(db.shorten_name(u'Courses_course_department'))
+        # Deleting field 'Course.others_details'
+        db.delete_column(u'Courses_course', 'others_details')
 
-        # Deleting model 'BatchDetails'
-        db.delete_table(u'Courses_batchdetails')
 
-        # Removing M2M table for field files on 'BatchDetails'
-        db.delete_table(db.shorten_name(u'Courses_batchdetails_files'))
+        # Changing field 'Course.reduction_wastage'
+        db.alter_column(u'Courses_course', 'reduction_wastage', self.gf('django.db.models.fields.TextField')(null=True))
 
-        # Deleting model 'Attendance'
-        db.delete_table(u'Courses_attendance')
+        # Changing field 'Course.technical'
+        db.alter_column(u'Courses_course', 'technical', self.gf('django.db.models.fields.TextField')(null=True))
 
-        # Deleting model 'CourseEmployeeList'
-        db.delete_table(u'Courses_courseemployeelist')
+        # Changing field 'Course.reduction_time'
+        db.alter_column(u'Courses_course', 'reduction_time', self.gf('django.db.models.fields.TextField')(null=True))
 
-        # Deleting model 'CoursewiseTrainer'
-        db.delete_table(u'Courses_coursewisetrainer')
+        # Changing field 'Course.others'
+        db.alter_column(u'Courses_course', 'others', self.gf('django.db.models.fields.TextField')(null=True))
 
-        # Deleting model 'BatchwiseTrainer'
-        db.delete_table(u'Courses_batchwisetrainer')
+        # Changing field 'Course.quality_improvement'
+        db.alter_column(u'Courses_course', 'quality_improvement', self.gf('django.db.models.fields.TextField')(null=True))
 
-        # Deleting model 'Grading'
-        db.delete_table(u'Courses_grading')
+        # Changing field 'Course.behavioral'
+        db.alter_column(u'Courses_course', 'behavioral', self.gf('django.db.models.fields.TextField')(null=True))
 
-        # Deleting model 'Feedback'
-        db.delete_table(u'Courses_feedback')
-
-        # Deleting model 'Files'
-        db.delete_table(u'Courses_files')
-
-        # Removing M2M table for field modifiedBy on 'Files'
-        db.delete_table(db.shorten_name(u'Courses_files_modifiedBy'))
-
+        # Changing field 'Course.productivity'
+        db.alter_column(u'Courses_course', 'productivity', self.gf('django.db.models.fields.TextField')(null=True))
 
     models = {
         u'Courses.attendance': {
@@ -231,21 +105,21 @@ class Migration(SchemaMigration):
         },
         u'Courses.course': {
             'Meta': {'object_name': 'Course'},
-            'behavioral': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'behavioral': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'course_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'course_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
             'department': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['Users.Department']", 'null': 'True', 'blank': 'True'}),
-            'duration': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'final': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'duration': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'misc_Details': ('django.db.models.fields.CharField', [], {'max_length': '600'}),
-            'objective': ('django.db.models.fields.CharField', [], {'max_length': '400'}),
-            'others': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'productivity': ('django.db.models.fields.TextField', [], {'null': 'True'}),
-            'quality_improvement': ('django.db.models.fields.TextField', [], {'null': 'True'}),
-            'reduction_time': ('django.db.models.fields.TextField', [], {'null': 'True'}),
-            'reduction_wastage': ('django.db.models.fields.TextField', [], {'null': 'True'}),
-            'technical': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
+            'misc_Details': ('django.db.models.fields.CharField', [], {'max_length': '600', 'blank': 'True'}),
+            'objective': ('django.db.models.fields.CharField', [], {'max_length': '400', 'blank': 'True'}),
+            'others': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'others_details': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'productivity': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'quality_improvement': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'reduction_time': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'reduction_wastage': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'technical': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'Courses.courseemployeelist': {
             'Meta': {'object_name': 'CourseEmployeeList'},

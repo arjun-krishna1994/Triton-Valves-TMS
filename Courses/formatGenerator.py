@@ -7,13 +7,13 @@ from Courses.models import BatchDetails, Course
 def make_l4pa1(batch,employees ,trainers ,file_location):
     trainerNames = []
     for trainer in trainers:
-        trainerNames.append(trainer.userObj.first_name + " " + trainer.userObj.last_name)
+        trainerNames.append(trainer.user.first_name + " " + trainer.user.last_name)
     hods = []
     for department in batch.course.department.all():
         hods.extend(userfunctions.get_hod_of_department(department))
     hodNames = []
     for hod in hods:
-        hodNames.append(hod.userObj.first_name + " " + hod.userObj.last_name)
+        hodNames.append(hod.user.first_name + " " + hod.user.last_name)
         
     wb = Workbook(encoding='latin-1')
     wsheet = wb.add_sheet('L4PA1(new)')
@@ -98,7 +98,7 @@ def make_l4pa1(batch,employees ,trainers ,file_location):
     for i in range(1,len(employees)+1):                   #range till total no of employees selected
         wsheet.write(17+i,0,i,stylenew1)    #s no.
         wsheet.write(17+i,1,employees[i-1].userId,stylenew1)   #CL-CODE
-        wsheet.write(17+i,2,employees[i-1].userObj.first_name +" " + employees[i-1].userObj.last_name,stylenew1)   #Employee Name
+        wsheet.write(17+i,2,employees[i-1].user.first_name +" " + employees[i-1].user.last_name,stylenew1)   #Employee Name
         wsheet.write(17+i,3,employees[i-1].department.dept_name,stylenew1)   #Department
         wsheet.write(17+i,4,employees[i-1].designation,stylenew1)   #Designation
         wsheet.write(17+i,5,"",stylenew1)   #Signature .. Intentionally left blank
@@ -127,7 +127,7 @@ from xlwt import*
 def make_l4pa3(batch,employees,trainers,file_location):
     trainerNames = []
     for trainer in trainers:
-        trainerNames.append(trainer.userObj.first_name + " " + trainer.userObj.last_name)
+        trainerNames.append(trainer.user.first_name + " " + trainer.user.last_name)
     wb = Workbook()
     wsheet = wb.add_sheet('L4PA3')
     wsheet.show_grid = False
@@ -233,7 +233,7 @@ def make_l4pa3(batch,employees,trainers,file_location):
     i=1
     for i in range(1,len(employees)+1):                   #here 1 is fixed and 18 is the number of names from the database
         wsheet.write(i+9,0,i,stylebody1)    #slno
-        wsheet.write(i+9,1,employees[i-1].userObj.first_name + employees[i-1].userObj.last_name,stylebody)    #Name of the employee from the database
+        wsheet.write(i+9,1,employees[i-1].user.first_name + employees[i-1].user.last_name,stylebody)    #Name of the employee from the database
         wsheet.write(i+9,2,employees[i-1].userId,stylebody)    #employee no from the database
         wsheet.write(i+9,3,employees[i-1].current_shift,stylebody)    #shift from the database
         wsheet.write(i+9,4,"",stylebody)    # signature ...  intentionally left blank
@@ -361,7 +361,7 @@ def make_l4pa5(file_location, batch , trainers ,employeeFeedbacks):
 
     for i in range(0,len(employeeFeedbacks)): #for reference "20" is a variable its just the number of people giving the feedback
         wsheet.write(i+7,0,i+1,stylebody)
-        wsheet.write(i+7,1,employeeFeedbacks[i].employee.userObj.first_name + " " + employeeFeedbacks[i].employee.userObj.last_name,stylebody) #name of the employee giving the feedback
+        wsheet.write(i+7,1,employeeFeedbacks[i].employee.user.first_name + " " + employeeFeedbacks[i].employee.user.last_name,stylebody) #name of the employee giving the feedback
 
         a[0] = (employeeFeedbacks[i].feedback.training_methodology)#methodolgy feedback
         wsheet.write(i+7,2,a[0],stylebody)
@@ -697,7 +697,7 @@ from xlwt import*
 def make_l4pa9(batch , departments, trainers , grades ,file_location):
     trainerNames = []
     for trainer in trainers:
-        trainerNames.append(trainer.userObj.first_name + " " + trainer.userObj.last_name)
+        trainerNames.append(trainer.user.first_name + " " + trainer.user.last_name)
     wb = Workbook()
     for department in departments:
         wsheet = wb.add_sheet(department.dept_name)
@@ -829,7 +829,7 @@ def make_l4pa9(batch , departments, trainers , grades ,file_location):
 
         for i in range (1,len(grades)+1):
             wsheet.write_merge(17+i,17+i,0,0,i, styletitle)
-            wsheet.write_merge(17+i,17+i,1,3,grades[i-1].employee.userObj.first_name + " " + grades[i-1].employee.userObj.last_name, styletitle) #name
+            wsheet.write_merge(17+i,17+i,1,3,grades[i-1].employee.user.first_name + " " + grades[i-1].employee.user.last_name, styletitle) #name
             wsheet.write_merge(17+i,17+i,4,5,grades[i-1].pre_training, styletitle)    #pre-training assesment
             wsheet.write_merge(17+i,17+i,6,7,grades[i-1].post_training, styletitle)    #post-training assesment
             wsheet.write_merge(17+i,17+i,8,10,str(grades[i-1].retraning_needed), styletitle)   #retraining required?
@@ -951,6 +951,157 @@ def make_l4pa2(file_location,departments,courses):    ####
             i = i + 1
             row = row + 1
         
+
+    wb.save(file_location)
+    
+import xlrd
+import time
+from xlwt import*
+
+def make_l4pa5(batch,employees, trainers ,file_location):#######
+    trainerNames = []
+    for trainer in trainers:
+        trainerNames.append(trainer.user.first_name + " " + trainer.user.last_name)    
+    wb = Workbook()
+    wsheet = wb.add_sheet(batch.course.course_name)################
+
+    wsheet.col(1).width = 6666
+    wsheet.col(2).width = 4000
+    wsheet.col(3).width = 4000
+    wsheet.col(4).width = 4000
+    wsheet.col(5).width = 4000
+    wsheet.col(6).width = 4000
+    wsheet.col(7).width = 4000
+    wsheet.col(8).width = 4000
+    wsheet.col(9).width = 4000
+    wsheet.col(10).width = 4000
+
+    fontbold = Font()
+    fontbold.name = "Arial"
+    fontbold.colour_index = 0
+    fontbold.bold = True
+
+    fontnotbold = Font()
+    fontnotbold.name = "Arial"
+    fontnotbold.colour_index = 0
+    fontnotbold.bold = True
+
+    alignmentcenter = Alignment()
+    alignmentcenter.horz = Alignment.HORZ_CENTER
+    alignmentcenter.vert = Alignment.VERT_CENTER
+
+    alignmentleft = Alignment()
+    alignmentleft.horz = Alignment.HORZ_LEFT
+    alignmentleft.vert = Alignment.VERT_CENTER
+
+    bordername = Borders()
+    bordername.left = 1
+    bordername.right = 1 
+    bordername.top = 1
+    bordername.bottom = 1
+
+
+    stylehead = XFStyle()
+    stylehead.font = fontbold
+    stylehead.alignment = alignmentcenter
+    stylehead.borders = bordername
+
+    styletitle = XFStyle()
+    styletitle.font = fontnotbold
+    styletitle.alignment = alignmentleft
+    styletitle.borders = bordername
+
+    stylebody = XFStyle()
+    stylebody.font = fontnotbold
+    stylebody.alignment = alignmentleft
+    stylebody.borders = bordername
+
+    wsheet.write_merge(0,0,0,10,"TRITON VALVES LIMITED",stylehead)
+    wsheet.write_merge(1,1,0,10,"PROGRAMME EVALUATION STATEMENT",stylehead)
+    wsheet.write_merge(2,2,9,10,"L4-PA-5",stylehead)
+    wsheet.write_merge(3,3,0,4,"Programme Title:" + batch.course.course_name,styletitle) ##########
+    wsheet.write_merge(3,3,5,8,"Conducted by:" + ','.join(trainerNames),styletitle)  ########
+    wsheet.write_merge(3,3,9,10,"Date:" + str(batch.start_date),styletitle)##########
+    wsheet.write_merge(4,4,2,6,"PROGRAMME EVALUATION",stylehead)
+    wsheet.write_merge(4,4,7,10,"FACULTY EVALUATION",stylehead)
+
+    wsheet.write(5,0,"Sl.No",stylehead)
+    wsheet.write(5,1,"Name",stylehead)
+    wsheet.write(5,2,"Methodology",stylehead)
+    wsheet.write(5,3,"Audio Vision",stylehead)
+    wsheet.write(5,4,"Course Material",stylehead)
+    wsheet.write(5,5,"Arrangement",stylehead)
+    wsheet.write(5,6,"Overall Opinion",stylehead)
+    wsheet.write(5,7,"Subject Knowledge",stylehead)
+    wsheet.write(5,8,"Presentation Skill",stylehead)
+    wsheet.write(5,9,"Communication",stylehead)
+    wsheet.write(5,10,"Interation skills",stylehead)
+    
+    for i in range(0,len(employees)):    ##################
+        wsheet.write(i+7,0,i+1,stylebody)
+        wsheet.write(i+7,1,employees[i].user.first_name + " " + employees[i].user.last_name ,stylebody) #name of the employee giving the feedback
+
+        wsheet.write(i+7,2,'',stylebody)
+        wsheet.write(i+7,3,'',stylebody)
+        wsheet.write(i+7,4,'',stylebody)
+        wsheet.write(i+7,5,'',stylebody)
+        wsheet.write(i+7,6,'',stylebody)
+        wsheet.write(i+7,7,'',stylebody)
+        wsheet.write(i+7,8,'',stylebody)
+        wsheet.write(i+7,9,'',stylebody)
+        wsheet.write(i+7,10,'',stylebody)
+
+      ##########################     
+    wsheet.write(len(employees)+7,2,"Methodology",stylehead)
+    wsheet.write(len(employees)+7,3,"Audio Vision",stylehead)
+    wsheet.write(len(employees)+7,4,"Course Material",stylehead)
+    wsheet.write(len(employees)+7,5,"Arrangement",stylehead)
+    wsheet.write(len(employees)+7,6,"Overall Opinion",stylehead)
+    wsheet.write(len(employees)+7,7,"Subject Knowledge",stylehead)
+    wsheet.write(len(employees)+7,8,"Presentation Skill",stylehead)
+    wsheet.write(len(employees)+7,9,"Communication",stylehead)
+    wsheet.write(len(employees)+7,10,"Interation skills",stylehead)
+
+
+
+
+    wsheet.write_merge(len(employees)+8,len(employees)+8,0,1,"Ranking",stylehead) 
+    wsheet.write(len(employees)+8,2,'',stylebody)
+    wsheet.write(len(employees)+8,3,'',stylebody)
+    wsheet.write(len(employees)+8,4,'',stylebody)
+    wsheet.write(len(employees)+8,5,'',stylebody)
+    wsheet.write(len(employees)+8,6,'',stylebody)
+    wsheet.write(len(employees)+8,7,'',stylebody)
+    wsheet.write(len(employees)+8,8,'',stylebody)
+    wsheet.write(len(employees)+8,9,'',stylebody)
+    wsheet.write(len(employees)+8,10,'',stylebody)
+
+
+    wsheet.write_merge(len(employees)+9,len(employees)+9,0,1,"Maximum Rating",stylehead)# here the value "len(employees)" is variable and "9" is fixed
+    for i in range(2,7):
+        wsheet.write(len(employees)+9,i, (str)(len(employees)*10) ,stylebody) # here also 'len(employees)' is the number of people
+       
+    for i in range(7,11):
+        wsheet.write(len(employees)+9,i, (str)(len(employees)*10) ,stylebody) # here also 'len(employees)' is the number of people
+       
+
+
+    wsheet.write_merge(len(employees)+10,len(employees)+10,0,1,"% of Rating",stylehead)# here the value "len(employees)" is variable and "10" is fixed
+
+    wsheet.write(len(employees)+10,2,'',stylebody)#here also "C-len(employees)" is a variable
+    wsheet.write(len(employees)+10,3,'',stylebody)#here also "D-len(employees)" is a variable
+    wsheet.write(len(employees)+10,4,'',stylebody)#here also "E-len(employees)" is a variable
+    wsheet.write(len(employees)+10,5,'',stylebody)#here also "F-len(employees)" is a variable
+    wsheet.write(len(employees)+10,6,'',stylebody)#here also "G-len(employees)" is a variable
+    wsheet.write(len(employees)+10,7,'',stylebody)#here also "H-len(employees)" is a variable
+    wsheet.write(len(employees)+10,8,'',stylebody)#here also "I-len(employees)" is a variable
+    wsheet.write(len(employees)+10,9,'',stylebody)#here also "J-len(employees)" is a variable
+    wsheet.write(len(employees)+10,10,'',stylebody)#here also "K-len(employees)" is a variable
+
+    wsheet.write_merge(len(employees)+11,len(employees)+11,0,1,"Average",stylehead)# here the value "len(employees)" is variable and "10" is fixed
+    wsheet.write_merge(len(employees)+11,len(employees)+11,2,6,'',stylehead)# here the value "len(employees)" is variable and "10" is fixed
+    wsheet.write_merge(len(employees)+11,len(employees)+11,7,10,'',stylehead)# here the value "len(employees)" is variable and "10" is fixed
+
 
     wb.save(file_location)
 

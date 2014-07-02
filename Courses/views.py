@@ -36,7 +36,7 @@ def emp_auth_needed(view_func):
         if not request.user.is_authenticated():
             return HttpResponseRedirect('../../../login')
         try:
-            emp = EmployeeInfo.objects.all().get(userObj = request.user )
+            emp = EmployeeInfo.objects.all().get(user = request.user )
         except EmployeeInfo.DoesNotExist:
             emp = None
         
@@ -49,7 +49,7 @@ def emp_auth_needed(view_func):
 @emp_auth_needed
 def create_course(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
         
@@ -61,21 +61,21 @@ def create_course(request):
                 form.save()
                 course = form.save()
                 t = get_template('courseAdded.html')
-                c = Context({'course':course})
+                c = Context({'emp1':emp,'course':course})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form': form})
+                c = Context({'emp1':emp,'form': form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))                
         else:
             form = CourseForm()
-            c = Context({'form': form})
+            c = Context({'emp1':emp,'form': form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
         
         
 @emp_auth_needed       
 def search_course(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD):
@@ -87,13 +87,14 @@ def search_course(request):
             cad = CourseAssignmentData(course,np,nt)
             liste.append(cad)
         t = get_template("coursesSearch.html")
-        c = Context({'list':liste})
+        c = Context({'emp1':emp,'list':liste})
         return HttpResponse(t.render(c))
     else:
         return HttpResponseRedirect("../../../loggedin")
 
 @emp_auth_needed
 def create_batches_for_course(request):
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     courseid = request.GET.get('courseid',None).encode('ascii','ignore')    
     number  = request.GET.get('num',None).encode('ascii','ignore') 
     if number is not None:
@@ -116,17 +117,17 @@ def create_batches_for_course(request):
             np = len(list(Users.models.CoursesToAttend.objects.filter(course = course)))
             nt = len(get_trainer_list(course = course))
             cad = CourseAssignmentData(course,np,nt, batches)
-            c = Context({'liste': [cad]})
+            c = Context({'emp1':emp,'liste': [cad]})
             return HttpResponse(t.render(c))
         else:
-            c = Context({'formset':forms1,'batches': batches})
+            c = Context({'emp1':emp,'formset':forms1,'batches': batches})
             return render_to_response('registerBatches.html', context_instance=RequestContext(request,c))
     else:
         return render_to_response('registerBatches.html', context_instance=RequestContext(request,{'formset':forms1,'batches':batches}))
 
 def view_calendar(request):  
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin ):
@@ -142,21 +143,21 @@ def view_calendar(request):
                     batches = list(BatchDetails.objects.filter(start_date__year = year))
                     cad = CourseAssignmentData(course,np,nt, batches)
                     liste.append(cad)
-                c = Context({'liste': liste})
+                c = Context({'emp1':emp,'liste': liste})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
         else:
             form = YearForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))           
         
     return HttpResponseRedirect('../../loggedin')      
 @emp_auth_needed
 def edit_course(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD):
@@ -168,15 +169,15 @@ def edit_course(request):
                 form.do_clean_department(emp)
                 form.save()
                 t = get_template('courseAdded.html')
-                c = Context({'course':course})
+                c = Context({'emp1':emp,'course':course})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form':form}) 
+                c = Context({'emp1':emp,'form':form}) 
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
                 
         else:
             form = CourseForm(instance = course)
-            c = Context({'form':form}) 
+            c = Context({'emp1':emp,'form':form}) 
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         return HttpResponseRedirect("../../../loggedin")
@@ -185,7 +186,7 @@ def edit_course(request):
 def delete_course(request):
 
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD):
@@ -204,13 +205,13 @@ def delete_course(request):
 @emp_auth_needed 
 def add_ttc_main(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_manager):
         t = get_template('ttcMain.html')
         courses = functions.getCourseList(emp)
-        c = Context({'courses':courses}) 
+        c = Context({'emp1':emp,'courses':courses}) 
         return HttpResponse(t.render(c))
             
     else: 
@@ -219,7 +220,7 @@ def add_ttc_main(request):
 @emp_auth_needed    
 def ttc_emp_list(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -247,7 +248,7 @@ def ttc_emp_list(request):
             else:
                 set2 = []
             if(first_name == '' and  last_name == '' and  userID == '' and  username == '' and course is not None ):
-                c = Context({'list': set2})
+                c = Context({'emp1':emp,'list': set2})
                 t = get_template('addList.html')
                 return HttpResponse(t.render(c))
                 
@@ -269,18 +270,18 @@ def ttc_emp_list(request):
                             set2.remove(elem)
                 if not username == '':
                     for elem in set2:
-                        if (elem.userObj.username.lower()).find(username.lower()) >= 0 and determineAuthType(elem,emp):
+                        if (elem.user.username.lower()).find(username.lower()) >= 0 and determineAuthType(elem,emp):
                             tempset.append(elem)
                             set2.remove(elem)
                 
             else:
                 tempset = []
-            c = Context({'list': tempset})
+            c = Context({'emp1':emp,'list': tempset})
             t = get_template('addList.html')
             return HttpResponse(t.render(c))
         else:
             tempset = []
-            c = Context({'list': tempset})
+            c = Context({'emp1':emp ,'list': tempset})
             t = get_template('addList.html')
             return HttpResponse(t.render(c))
     else:
@@ -289,7 +290,7 @@ def ttc_emp_list(request):
 @emp_auth_needed 
 def ttc_trainer_list(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -305,11 +306,11 @@ def ttc_trainer_list(request):
                 set2 = []
             
             t = get_template('addedList.html')
-            c = Context({'list': set2})
+            c = Context({'emp1':emp,'list': set2})
             return HttpResponse(t.render(c))
         else:
             t = get_template('addedList.html')
-            c = Context({'list': []})
+            c = Context({'emp1':emp,'list': []})
             return HttpResponse(t.render(c))
     else:
         return HttpResponse('Employee Not Registered or Invalid <br> <a href = "../../logout" > Logout </a>')    
@@ -317,7 +318,7 @@ def ttc_trainer_list(request):
 @emp_auth_needed
 def add_ttc(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_manager):
@@ -333,7 +334,7 @@ def add_ttc(request):
 @emp_auth_needed    
 def del_ttc(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_manager):
@@ -359,14 +360,14 @@ def trial_post(request):
 @emp_auth_needed 
 def add_ttb_main(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_manager):
         batchid = request.GET.get('batchid',None).encode('ascii','ignore')
         batch = BatchDetails.objects.get(id = batchid)
         t = get_template('ttbMain.html')
-        c = Context({'batch':batch}) 
+        c = Context({'emp1':emp,'batch':batch}) 
         return HttpResponse(t.render(c))
             
     else: 
@@ -375,7 +376,7 @@ def add_ttb_main(request):
 @emp_auth_needed    
 def ttb_emp_list(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -403,7 +404,7 @@ def ttb_emp_list(request):
             else:
                 set2 = []
             if(first_name == '' and  last_name == '' and  userID == '' and  username == '' and batch is not None ):
-                c = Context({'list': set2, 'batch':batch})
+                c = Context({'emp1':emp,'list': set2, 'batch':batch})
                 t = get_template('addList2.html')
                 return HttpResponse(t.render(c))
                 
@@ -425,18 +426,18 @@ def ttb_emp_list(request):
                             set2.remove(elem)
                 if not username == '':
                     for elem in set2:
-                        if (elem.userObj.username.lower()).find(username.lower()) >= 0 and determineAuthType(elem,emp):
+                        if (elem.user.username.lower()).find(username.lower()) >= 0 and determineAuthType(elem,emp):
                             tempset.append(elem)
                             set2.remove(elem)
                 
             else:
                 tempset = []
-            c = Context({'list': tempset, 'batch':batch})
+            c = Context({'emp1':emp,'list': tempset, 'batch':batch})
             t = get_template('addList2.html')
             return HttpResponse(t.render(c))
         else:
             tempset = []
-            c = Context({'list': tempset})
+            c = Context({'emp1':emp,'list': tempset})
             t = get_template('addList2.html')
             return HttpResponse(t.render(c))
     else:
@@ -445,7 +446,7 @@ def ttb_emp_list(request):
 @emp_auth_needed 
 def ttb_trainer_list(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -461,11 +462,11 @@ def ttb_trainer_list(request):
                 set2 = []
             
             t = get_template('addedList2.html')
-            c = Context({'list': set2 , 'batch':batch})
+            c = Context({'emp1':emp,'list': set2 , 'batch':batch})
             return HttpResponse(t.render(c))
         else:
             t = get_template('addedList2.html')
-            c = Context({'list': []})
+            c = Context({'emp1':emp,'list': []})
             return HttpResponse(t.render(c))
     else:
         return HttpResponse('Employee Not Registered or Invalid <br> <a href = "../../logout" > Logout </a>')    
@@ -473,7 +474,7 @@ def ttb_trainer_list(request):
 @emp_auth_needed
 def add_ttb(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_manager):
@@ -489,7 +490,7 @@ def add_ttb(request):
 @emp_auth_needed    
 def del_ttb(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_manager):
@@ -516,7 +517,7 @@ def empIsToAttend(employee,course):
 @csrf_exempt
 def course_emp_assignment(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -552,19 +553,19 @@ def course_emp_assignment(request):
 @emp_auth_needed
 def main_course_emp_assignment(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
         t = get_template('maincourseEmployeeAssignment.html')
-        c = Context({})
+        c = Context({'emp1':emp})
         return HttpResponse(t.render(c))
     return HttpResponseRedirect('../../loggedin')
 
 @emp_auth_needed
 def course_emp_assignemnt_details(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -575,7 +576,7 @@ def course_emp_assignemnt_details(request):
         employees = []
         for employee in employeesl:
             employees.append(employee.employee)
-        c = Context({'employees':employees,'trainers':trainers})
+        c = Context({'emp1':emp,'employees':employees,'trainers':trainers})
         t = get_template('cead.html')
         return HttpResponse(t.render(c))
     
@@ -586,6 +587,7 @@ def course_emp_assignemnt_details(request):
 @emp_auth_needed 
 def main_course_emp_assignemnt_details(request):
     courses = list(Course.objects.all()) 
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     liste = []
     for course in courses:
         np = len(list(Users.models.CoursesToAttend.objects.filter(course = course)))
@@ -593,7 +595,7 @@ def main_course_emp_assignemnt_details(request):
         cad = CourseAssignmentData(course,np,nt)
         liste.append(cad)
     t = get_template('mcead.html')
-    c = Context({'list':liste })
+    c = Context({'emp1':emp,'list':liste })
     return HttpResponse(t.render(c))
 
 
@@ -601,7 +603,7 @@ def main_course_emp_assignemnt_details(request):
 @emp_auth_needed 
 def view_batch(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None 
     batchid = request.GET.get('batchid','').encode('ascii','ignore')
@@ -609,7 +611,7 @@ def view_batch(request):
     if emp is not None and (userfunctions.authorised_to_handle(handler = emp , batch = batch )):
 
         t = get_template('batchDetails.html')
-        c = Context({'item':batch})
+        c = Context({'emp1':emp,'item':batch})
         return HttpResponse(t.render(c))
     else:
         return HttpResponseForbidden("Get Lost.")
@@ -618,7 +620,7 @@ def view_batch(request):
 @emp_auth_needed 
 def assign_batches(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -628,21 +630,21 @@ def assign_batches(request):
                 batch = form.save()
                 functions.add_deafult_trainers_to_batch(batch)
                 t = get_template('batchAdded.html')
-                c = Context({'batch':batch})
+                c = Context({'emp1':emp,'batch':batch})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
         else:
             form = BatchForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     return HttpResponseRedirect('../../loggedin')
 
 @emp_auth_needed
 def main_edit_batches(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -650,14 +652,14 @@ def main_edit_batches(request):
         t = get_template('mainEditBatch.html')
         now = datetime.now()
         years = range(2014, int(now.year) + 10)
-        c = Context({'courses': courses,'years':years})
+        c = Context({'emp1':emp,'courses': courses,'years':years})
         return HttpResponse(t.render(c))
     return HttpResponseRedirect('../../loggedin')
 
 @emp_auth_needed 
 def list_edit_batches(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -674,20 +676,20 @@ def list_edit_batches(request):
                 batches = batches.filter(start_date__year = year )
             print batches
             t = get_template('batchList.html')
-            c = Context({'list':batches})
+            c = Context({'emp1':emp,'list':batches})
             return HttpResponse(t.render(c))
         else:
             batches = BatchDetails.objects.filter( course_finished = False)
             t = get_template('batchList.html')
             print batches
-            c = Context({'list':batches})
+            c = Context({'emp1':emp,'list':batches})
             return HttpResponse(t.render(c))
     return HttpResponseRedirect('../../loggedin')
 
 @emp_auth_needed
 def edit_batches(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -701,29 +703,30 @@ def edit_batches(request):
                 if  form.is_valid() and form.clean_with_emp(emp) :
                     batch = form.save()
                     t = get_template('batchAdded.html')
-                    c = Context({'batch':batch})
+                    c = Context({'emp1':emp,'batch':batch})
                     return HttpResponse(t.render(c))
                 else:
-                    c = Context({'form':form})
+                    c = Context({'emp1':emp,'form':form})
                     return render_to_response('registration.html', context_instance=RequestContext(request,c))                
             else:
                 form = BatchForm(instance = batch)
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
     return HttpResponseRedirect('../../loggedin')
 
 @emp_auth_needed
 def main_assign_employee_batch(request):
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     batchid = request.GET['batchid'].encode('ascii','ignore')
     batch = BatchDetails.objects.get(id = batchid)
     t = get_template('assEmpToBatch.html')
-    c = Context({'batch':batch})
+    c = Context({'emp1':emp,'batch':batch})
     return HttpResponse(t.render(c)) 
     
 @emp_auth_needed
 def free_employees_for_batch(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -746,7 +749,7 @@ def free_employees_for_batch(request):
                 set2 = []
             print set2
             if(first_name == '' and  last_name == '' and  userID == '' and  username == '' and batch is not None ):
-                c = Context({'list': set2,'batch':batch})
+                c = Context({'emp1':emp,'list': set2,'batch':batch})
                 t = get_template('addListBatch.html')
                 return HttpResponse(t.render(c))
                 
@@ -768,18 +771,18 @@ def free_employees_for_batch(request):
                             set2.remove(elem)
                 if not username == '':
                     for elem in set2:
-                        if (elem.userObj.username.lower()).find(username.lower()) >= 0 and determineAuthType(elem,emp):
+                        if (elem.user.username.lower()).find(username.lower()) >= 0 and determineAuthType(elem,emp):
                             tempset.append(elem)
                             set2.remove(elem)
                 
             else:
                 tempset = []
-            c = Context({'list': tempset ,'batch':batch})
+            c = Context({'emp1':emp,'list': tempset ,'batch':batch})
             t = get_template('addListBatch.html')
             return HttpResponse(t.render(c))
         else:
             tempset = []
-            c = Context({'list': tempset,'batch':batch})
+            c = Context({'emp1':emp,'list': tempset,'batch':batch})
             t = get_template('addListBatch.html')
             return HttpResponse(t.render(c))
     else:
@@ -788,7 +791,7 @@ def free_employees_for_batch(request):
 @emp_auth_needed    
 def employees_of_batch(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -804,18 +807,18 @@ def employees_of_batch(request):
                 set2 = []
             
             t = get_template('addedListBatch.html')
-            c = Context({'list': set2 ,'batch':batch})
+            c = Context({'emp1':emp,'list': set2 ,'batch':batch})
             return HttpResponse(t.render(c))
         else:
             t = get_template('addedListBatch.html')
-            c = Context({'list': [] })
+            c = Context({'emp1':emp,'list': [] })
             return HttpResponse(t.render(c))
     else:
         return HttpResponse('Employee Not Registered or Invalid <br> <a href = "../../logout" > Logout </a>')   
     
 @emp_auth_needed
 def add_employee_to_batch(request):
-    emp = EmployeeInfo.objects.all().get(userObj = request.user )
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     empl = EmployeeInfo.objects.get(id = request.GET['empid'].encode('ascii','ignore') )
     batch = BatchDetails.objects.get(id = request.GET['batchid'].encode('ascii','ignore') )
     if functions.add_employee(batch, empl, emp):
@@ -825,7 +828,7 @@ def add_employee_to_batch(request):
     
 @emp_auth_needed
 def remove_employee_from_batch(request):
-    emp = EmployeeInfo.objects.all().get(userObj = request.user )
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     empl = EmployeeInfo.objects.get(id = request.GET['empid'].encode('ascii','ignore') )
     batch = BatchDetails.objects.get(id = request.GET['batchid'].encode('ascii','ignore') )
     if functions.remove_employee(batch, empl, emp):
@@ -836,7 +839,7 @@ def remove_employee_from_batch(request):
 @emp_auth_needed
 def start_batch(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -852,7 +855,7 @@ def start_batch(request):
 @emp_auth_needed
 def stop_batch(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -871,7 +874,7 @@ def stop_batch(request):
 
 @emp_auth_needed
 def do_feedback(request):
-    emp = EmployeeInfo.objects.all().get(userObj = request.user )
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     batchid = request.GET.get('batchid','').encode('ascii','ignore')
     try:
         batch = BatchDetails.objects.get(id = batchid)
@@ -884,17 +887,17 @@ def do_feedback(request):
         if forms.is_valid():
             list1 = forms.save()
             t = get_template('graded.html')
-            c = Context({'list':list1 ,'grading': True})
+            c = Context({'emp1':emp,'list':list1 ,'grading': True})
             return HttpResponse(t.render(c))
         else:
-            c = Context({'forms':forms})
+            c = Context({'emp1':emp,'forms':forms})
             render_to_response('grading.html', context_instance=RequestContext(request,c))
     forms = formset(queryset = functions.get_feedback_query_set(batch, emp))
-    c = Context({'forms':forms})
+    c = Context({'emp1':emp,'forms':forms})
     return render_to_response('grading.html', context_instance=RequestContext(request,c))
 @emp_auth_needed
 def do_grading(request):
-    emp = EmployeeInfo.objects.all().get(userObj = request.user )
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     batchid = request.GET.get('batchid','').encode('ascii','ignore')
     try:
         batch = BatchDetails.objects.get(id = batchid)
@@ -912,13 +915,13 @@ def do_grading(request):
                 if form.cleaned_data['retraning_needed']:
                     CoursesToAttend.objects.create(course = form.cleaned_data['batch'].course , employee = form.cleaned_data['employee'])
             t = get_template('graded.html')
-            c = Context({'list':list1})
+            c = Context({'emp1':emp,'list':list1})
             return HttpResponse(t.render(c))
         else:
-            c = Context({'forms':forms})
+            c = Context({'emp1':emp,'forms':forms})
             return render_to_response('grading.html', context_instance=RequestContext(request,c))
     forms = formset(queryset = functions.get_grading_query_set(batch, emp))
-    c = Context({'forms':forms})
+    c = Context({'emp1':emp,'forms':forms})
     return render_to_response('grading.html', context_instance=RequestContext(request,c))    
     
             
@@ -928,7 +931,7 @@ def do_grading(request):
 @emp_auth_needed
 def complete_batch(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -955,21 +958,21 @@ def complete_batch(request):
 @emp_auth_needed
 def search_all_documents(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin ):
         documents = Files.objects.all().order_by('-created')
         message = "All The Documents"
         t = get_template('documentList.html')
-        c = Context({'documents':documents,'message': message})
+        c = Context({'emp1':emp,'documents':documents,'message': message})
         return HttpResponse(t.render(c))
     return HttpResponseRedirect('../../loggedin')
 
 @emp_auth_needed
 def annual_training_calendars(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin ):
@@ -977,7 +980,7 @@ def annual_training_calendars(request):
         calendars = Files.objects.filter(name = "AC").order_by('-year')
         message = "All The Annual Calendars"
         t = get_template('documentList.html')
-        c = Context({'documents':calendars,'message': message})
+        c = Context({'emp1':emp,'documents':calendars,'message': message})
         return HttpResponse(t.render(c))
         
         
@@ -986,7 +989,7 @@ def annual_training_calendars(request):
 @emp_auth_needed
 def annual_training_calendar_template(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin ):
@@ -998,14 +1001,14 @@ def annual_training_calendar_template(request):
                 message = " Here is your template."
                 doclist = [filee]
                 t = get_template('documentList.html')
-                c = Context({'documents':doclist,'message': message})
+                c = Context({'emp1':emp,'documents':doclist,'message': message})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
         else:
             form = YearForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))           
         
     return HttpResponseRedirect('../../loggedin')
@@ -1013,7 +1016,7 @@ def annual_training_calendar_template(request):
 @emp_auth_needed
 def indent_for_year(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin ):
@@ -1025,14 +1028,14 @@ def indent_for_year(request):
                 message = " Here is your Indent."
                 doclist = [filee]
                 t = get_template('documentList.html')
-                c = Context({'documents':doclist,'message': message})
+                c = Context({'emp1':emp,'documents':doclist,'message': message})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
         else:
             form = YearForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))           
         
     return HttpResponseRedirect('../../loggedin')
@@ -1048,7 +1051,7 @@ def download_batch_documents(request):
     Anuual Training Calendar - Create batches.
     """
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -1060,7 +1063,7 @@ def download_batch_documents(request):
             files = functions.generateBatchFiles(batch,tempfiles,emp)
             t = get_template('documentList.html')
             message = "Download the batch documents."
-            c = Context({'documents':files ,'message':message})
+            c = Context({'emp1':emp,'documents':files ,'message':message})
             return HttpResponse(t.render(c))
             
     return HttpResponseRedirect('../../loggedin')    
@@ -1077,7 +1080,7 @@ def upload_batch_documents(request):
     Anuual Training Calendar - Create batches.
     """
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -1115,14 +1118,14 @@ def upload_batch_documents(request):
                         
                 message = "All the Files for the Batch("+  batch.course.course_name + "  , " + str(batch.start_date) + " now are"
                 t = get_template('documentList.html')
-                c = Context({'documents':batch.files.all(),'message': message})
+                c = Context({'emp1':emp,'documents':batch.files.all(),'message': message})
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'formset':formset})
+                c = Context({'emp1':emp,'formset':formset})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
         else:
-            c = Context({'formset':formset})
+            c = Context({'emp1':emp,'formset':formset})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
                 
@@ -1131,7 +1134,7 @@ def upload_batch_documents(request):
 @emp_auth_needed     
 def upload_document(request,):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -1145,11 +1148,11 @@ def upload_document(request,):
                 url = record.file.url
                 return HttpResponse("File Added Sucessfully Download it <a href = " + url + "> Here </a>" )
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form})
                 return render_to_response('fileUploads.html', context_instance=RequestContext(request,c)) 
         else:
             form =  FileForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('fileUploads.html', context_instance=RequestContext(request,c)) 
                 
     return HttpResponseRedirect('../../loggedin')   
@@ -1158,6 +1161,7 @@ def upload_document(request,):
 def edit_document(request):
     idt = request.GET['fileID'].encode('ascii','ignore')
     filer = get_object_or_404(Files, id=idt)
+    emp = EmployeeInfo.objects.all().get(user = request.user )
     if request.POST:
         form = FileForm(request.POST,request.FILES)
         if form.is_valid():
@@ -1165,14 +1169,14 @@ def edit_document(request):
             
             message = "The Edited Document."
             t = get_template('documentList.html')
-            c= Context({'documents':[document],'message': message})  
+            c= Context({'emp1':emp,'documents':[document],'message': message})  
             return HttpResponse(t.render(c))
         else:
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         form = FileForm(instance = filer)
-        c = Context({'form':form})
+        c = Context({'emp1':emp,'form':form})
         return render_to_response('registration.html', context_instance=RequestContext(request,c))
 
 @emp_auth_needed    
@@ -1187,9 +1191,10 @@ def delete_document(request):
 @emp_auth_needed   
 def employee_list_reader(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
-        emp = None  
+        emp = None 
+    
     if emp is not None and (emp.is_Admin):
         """"""
         if request.POST:
@@ -1201,14 +1206,14 @@ def employee_list_reader(request):
                 file_location = settings.MEDIA_ROOT.replace('\\','/') + "/" + record.file.name
                 wl = userfunctions.create_workers_from_list(file_location, emp)
                 t = get_template('employeesAdded.html')
-                c = Context({'errors':wl.errors, 'employees':wl.empList})
+                c = Context({'emp1':emp,'errors':wl.errors, 'employees':wl.empList})
                 return HttpResponse(t.render(c) )
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp,'form':form })
                 return render_to_response('fileUploads.html', context_instance=RequestContext(request,c)) 
         else:
             form =  FileForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp,'form':form})
             return render_to_response('fileUploads.html', context_instance=RequestContext(request,c)) 
                 
     return HttpResponseRedirect('../../loggedin')   

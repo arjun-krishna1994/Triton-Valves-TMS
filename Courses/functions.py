@@ -196,7 +196,6 @@ def generateBatchFiles(batch,files,emp):
         files.extend(filerOthers)
         
     setFiles = set(files)
-    setFiles.remove(None)
     return setFiles
         
 def generate_L4PA3(batch,emp):
@@ -235,13 +234,13 @@ def generate_L4PA5(batch,emp):
             flag = False
             return filer
     if(flag):
-        """file_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' +  '/'.join(['FilesCreated', str(batch.start_date.year), 'L4PA5.xls'])
+        file_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' +  '/'.join(['FilesCreated', str(batch.start_date.year), 'L4PA5.xls'])
         name = 'L4PA5'
         model_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' + '/'.join(['Files', str(batch.start_date.year), name + ".xls"])
         details = ' '
-        employeeFeedbacks = models.Feedback.objects.filter(batch= batch)
+        employees = employees_of_batch(batch,emp)
         trainers = get_trainer_list(batch = batch)
-        formatGenerator.make_l4pa5(file_location, batch, trainers, employeeFeedbacks)
+        formatGenerator.make_l4pa5(file_location = file_location, batch = batch, trainers = trainers, employees  = employees)
         filer = File(open(file_location))
         fileObj = models.Files.objects.create(name = name, details = details , file = filer , year = str(batch.start_date.year))
         model_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' + fileObj.file.name
@@ -250,7 +249,7 @@ def generate_L4PA5(batch,emp):
         fileObj.save()
         batch.files.add(fileObj)
         batch.save()
-        return fileObj"""
+        return fileObj
     #Generate the file using Bavej's code
     # and return it
     
@@ -602,7 +601,7 @@ class CourseData:
         self.external = ''
         trainerNames = []
         for trainer in trainers:
-            trainerNames.append(trainer.userObj.first_name + " " + trainer.userObj.last_name)
+            trainerNames.append(trainer.user.first_name + " " + trainer.user.last_name)
             if trainer.is_Internal:
                 self.internal = 'Y'
             else:
@@ -617,7 +616,7 @@ class DepartmentData():
         hods = userfunctions.get_hod_of_department(department)
         hodNames = []
         for hod in hods:
-            hodNames.append(hod.userObj.first_name + " " + hod.userObj.last_name)
+            hodNames.append(hod.user.first_name + " " + hod.user.last_name)
         self.hod = ','.join(hodNames)
             
     def get_employees(self):
@@ -633,7 +632,7 @@ class EmployeeCourseData():
     def __init__(self,employee):
         courses = models.Course.objects.all().order_by('course_name')
         self.userId = employee.userId
-        self.name = employee.userObj.first_name + employee.userObj.last_name
+        self.name = employee.user.first_name + employee.user.last_name
         i = 1
         self.courses = {}
         for course in courses:
