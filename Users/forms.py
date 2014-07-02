@@ -47,41 +47,58 @@ class UserForm(forms.Form):
         return new_user
 
 class EmployeeForm(forms.ModelForm ):
+
     class Meta:
         model = EmployeeInfo
-        exclude = ['email','userObj','first_name','last_name','is_Admin' ,'is_HOD','is_Manager']
-        
+        exclude = ['email','user','first_name','last_name','is_Admin' ,'is_HOD','is_Manager']
+    def save(self,*args, **kwargs):
+        employee = super(EmployeeForm,self).save()
+        if self.instance:   
+            employee.user.first_name = self.cleaned_data['first_name']
+            employee.user.last_name = self.cleaned_data['last_name']
+            employee.user.email = self.cleaned_data['email']
+            employee.user.save()
+        return employee
 class ManagerForm(forms.ModelForm ):
     class Meta:
         model = EmployeeInfo
-        exclude = ['email','userObj','first_name','last_name','is_Admin' ,'is_HOD','is_Manager','is_Staff']
+        exclude = ['email','user','first_name','last_name','is_Admin' ,'is_HOD','is_Manager','is_Staff']
         
 class AdminForm(forms.ModelForm ):
     class Meta:
         model = EmployeeInfo
-        exclude = ['email','userObj','first_name','last_name','is_Staff']
+        exclude = ['email','user','first_name','last_name','is_Staff']
     
     
 class HODForm(forms.ModelForm ):
     class Meta:
         model = EmployeeInfo
-        exclude = ['email','userObj','first_name','last_name','is_Admin' ,'is_HOD','is_Staff']
+        exclude = ['email','user','first_name','last_name','is_Admin' ,'is_HOD','is_Staff']
 
 class EmployeeEditForm(forms.ModelForm):
+    first_name = forms.CharField(required = False)
+    last_name = forms.CharField(required = False)
+    email = forms.EmailField(required = False)
+    def __init__(self,*args,**kwargs):
+        super(EmployeeEditForm,self).__init__(*args,**kwargs)
+        if self.instance:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
     def set_exclude(self,emp):
         if emp.is_Admin :
-            self.fields['userObj'].widget = forms.widgets.HiddenInput()
+            self.fields['user'].widget = forms.widgets.HiddenInput()
         elif emp.is_HOD:
-            self.fields['userObj'].widget = forms.widgets.HiddenInput()
+            self.fields['user'].widget = forms.widgets.HiddenInput()
             self.fields['is_HOD'].widget = forms.widgets.HiddenInput()
             self.fields['is_Admin'].widget = forms.widgets.HiddenInput()
         elif emp.is_Manager:
-            self.fields['userObj'].widget = forms.widgets.HiddenInput()
+            self.fields['user'].widget = forms.widgets.HiddenInput()
             self.fields['is_HOD'].widget = forms.widgets.HiddenInput()
             self.fields['is_Admin'].widget = forms.widgets.HiddenInput()
             self.fields['is_Manager'].widget = forms.widgets.HiddenInput()
         else:
-            self.fields['userObj'].widget = forms.widgets.HiddenInput()
+            self.fields['user'].widget = forms.widgets.HiddenInput()
             self.fields['email'].widget = forms.widgets.HiddenInput()
             self.fields['first_name'].widget = forms.widgets.HiddenInput()
             self.fields['last_name'].widget = forms.widgets.HiddenInput()
@@ -91,6 +108,14 @@ class EmployeeEditForm(forms.ModelForm):
         
     class Meta:
         model = EmployeeInfo   
+    def save(self,*args, **kwargs):
+        employee = super(EmployeeEditForm,self).save()
+        if self.instance:   
+            employee.user.first_name = self.cleaned_data['first_name']
+            employee.user.last_name = self.cleaned_data['last_name']
+            employee.user.email = self.cleaned_data['email']
+            employee.user.save()
+        return employee
 
 
 class CourseData:

@@ -1,7 +1,7 @@
 from Users.models import EmployeeInfo, Department, Schedule
 from Users import models, EmployeeListReader
 from Courses import models as Cmodels
-from Courses.models import CoursewiseTrainer
+from Courses.models import CoursewiseTrainer, Files
 from django.contrib.auth.models import User
 import calendar_write
 
@@ -11,15 +11,15 @@ import Courses
 from shutil import copyfile
 import datetime
 
-def getEmployeeList(emp, course = 'None'):
+def getEmployeeList(emp, course = 'None' ,working_Status = [True]):
     alldept = models.Department.objects.get(deptID = 'ALL')
     if course ==  'None':
         if emp.is_Admin:
-            return list(EmployeeInfo.objects.all())
+            return list(EmployeeInfo.objects.filter(working_Status__in = working_Status))
         if emp.is_HOD or emp.is_Manager:
             dept = emp.department
             try:
-                liste = list(EmployeeInfo.objects.filter(department = dept))
+                liste = list(EmployeeInfo.objects.filter(department = dept,working_Status__in  = working_Status))
             except EmployeeInfo.DoesNotExist:
                 liste = []
             return liste
@@ -27,12 +27,12 @@ def getEmployeeList(emp, course = 'None'):
         if emp.is_Admin:
             if alldept not in course.department.all():
                 liste2 = course.department.all()
-                return list(EmployeeInfo.objects.filter(department__in = liste2 ))
-            return list(EmployeeInfo.objects.all())
+                return list(EmployeeInfo.objects.filter(department__in = liste2 , working_Status__in  = working_Status ))
+            return list(EmployeeInfo.objects.filter(working_Status__in  = working_Status))
         elif emp.is_HOD or emp.is_Manager and (emp.department in course.department.all()):
             dept = emp.department
             try:
-                liste = list(EmployeeInfo.objects.filter(department = dept))
+                liste = list(EmployeeInfo.objects.filter(department = dept,working_Status__in  = working_Status))
             except EmployeeInfo.DoesNotExist:
                 liste = []
             return liste
@@ -123,12 +123,12 @@ def create_workers_from_list(list_file_location,emp):
                     if len(employee.name.split(' ',1)) > 1:
                         user.last_name = employee.name.split(' ',1)[1]
                     user.save()
-                    empl = EmployeeInfo.objects.get(userObj = user)
+                    empl = EmployeeInfo.objects.get(user = user)
                     empl.unit = employee.unit
-                    if employee.cat == 'TR-ST' or employee.cat == 'STAFF':
-                        empl.is_Staff = True
+                    empl.is_Staff = employee.staff
                     empl.designation = employee.cat
                     empl.department = department
+                    empl.working_Status = True
                     empl.save()
                     #empList.append(empl)
                 except User.DoesNotExist:
@@ -137,14 +137,19 @@ def create_workers_from_list(list_file_location,emp):
                     if len(employee.name.split(' ',1)) > 1:
                         user.last_name = employee.name.split(' ',1)[1]
                     user.save()
-                    if employee.cat == 'TR-ST' or employee.cat == 'STAFF':
-                        empl = EmployeeInfo(userObj = user , is_Staff = True ,userId = employee.idno,  unit = employee.unit , designation = employee.cat , phone_Number = 0 ,address = "NA" , current_shift = "NA" , department = department)
-                    else:
-                        empl = EmployeeInfo(userObj = user ,userId = employee.idno,  unit = employee.unit , designation = employee.cat , phone_Number = 0 ,address = "NA" , current_shift = "NA" , department = department)
+
+                    empl = EmployeeInfo(user = user , is_Staff = employee.staff ,userId = employee.idno,  unit = employee.unit , designation = employee.cat , phone_Number = 0 ,address = "NA" , current_shift = "NA" , department = department)
+                    empl.working_Status = True
+                        
                     empl.save()
                     empList.append(empl)
     wl = WorkerList(errors,empList)
     return wl
+
+def generate_employee_list_template():
+    template = Files.objects.get(id = 2)
+    return template
+
 def generate_schedule(year,emp):
     file_location = settings.MEDIA_ROOT.replace('\\','/')  + '/' +  '/'.join(['FilesCreated', str(year), 'AC.xls'])
     name = 'AC'
@@ -179,7 +184,7 @@ class ScheduleMessages():
             messages = []
             for messageObj in messageObjs:
                 messages.append(messageObj.message)
-            return ','.join(messages)
+            return '\n'.join(messages)
         except Schedule.DoesNotExist:
             return ""
                 

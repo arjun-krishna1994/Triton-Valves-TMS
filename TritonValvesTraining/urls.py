@@ -83,6 +83,7 @@ urlpatterns = patterns('',
     url(r'^indentGenerator/$', cviews.indent_for_year),
     url(r'^viewGF/$', uviews.view_emp_grades),
     url(r'^viewSchedule/$', uviews.generate_schedule),
+    url(r'^employeeListTemplate/$', uviews.down_employee_list_template),
     )+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
 

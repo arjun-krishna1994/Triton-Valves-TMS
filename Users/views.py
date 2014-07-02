@@ -27,7 +27,7 @@ def emp_auth_needed(view_func):
         if not request.user.is_authenticated():
             return HttpResponseRedirect('../../../login')
         try:
-            emp = EmployeeInfo.objects.all().get(userObj = request.user )
+            emp = EmployeeInfo.objects.all().get(user = request.user )
         except EmployeeInfo.DoesNotExist:
             emp = None
         
@@ -41,7 +41,7 @@ def emp_auth_needed(view_func):
 @emp_auth_needed
 def user_registration(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if request.user.is_authenticated() and emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_Manager ) :
@@ -53,7 +53,7 @@ def user_registration(request):
                 request.session["username"] = userForm.cleaned_data['username'] 
                 return HttpResponseRedirect('../../../' + request.GET["empType"])
             else:
-                c = Context({'form':userForm })
+                c = Context({'emp1':emp ,'form':userForm })
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
             
@@ -61,7 +61,7 @@ def user_registration(request):
             userForm = UserForm()
             
             #t = get_template('employeeRegistration.html')
-            c = Context({'form':userForm})
+            c = Context({'emp1':emp ,'form':userForm})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         return HttpResponseRedirect('../../../login')
@@ -70,13 +70,13 @@ def user_registration(request):
 @emp_auth_needed  
 def  employee_registration(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if (request.session["count2"] - request.session["count1"] == -1) and emp is not None :
         if request.POST :
             user = User.objects.all().get(username = request.session["username"] ) 
-            employee = EmployeeInfo(userObj = user )
+            employee = EmployeeInfo(user = user )
             employeeForm = EmployeeForm(request.POST,instance = employee )
             
             if employeeForm.is_valid() :
@@ -89,11 +89,11 @@ def  employee_registration(request):
                 
                 request.session["count2"] += 1
                 t = get_template('added.html')
-                c = Context({'employee':employeeForm.save() })
+                c = Context({'emp1':emp ,'employee':employeeForm.save() })
                 return HttpResponse(t.render(c))
             else :
                 #t = get_template('registration.html')
-                c = Context({'form': employeeForm})
+                c = Context({'emp1':emp ,'form': employeeForm})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
             
@@ -101,7 +101,7 @@ def  employee_registration(request):
         else:       
             employeeForm =  EmployeeForm()
             
-            c = Context({'form': employeeForm })
+            c = Context({'emp1':emp ,'form': employeeForm })
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         return HttpResponse('We are sorry but some error has occurred try to register again  from the start ')
@@ -152,11 +152,11 @@ def determineAuthType(empObj,empl):
 @emp_auth_needed
 def search_results(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
-        set2 = userfunctions.getEmployeeList(emp)
+        set2 = userfunctions.getEmployeeList(emp,working_Status = [True,False])
         if request.GET:
             userID = request.GET['userID'].encode('ascii','ignore')
             username = request.GET['username'].encode('ascii','ignore')
@@ -178,11 +178,11 @@ def search_results(request):
                 if not first_name == '' :
                     for elem in set2:
                         
-                        if (elem.userObj.first_name.lower()).find(first_name.lower()) >= 0  and determineEmpType(elem,empl,manager,hod,admin, staff):
+                        if (elem.user.first_name.lower()).find(first_name.lower()) >= 0  and determineEmpType(elem,empl,manager,hod,admin, staff):
                             tempset.append(elem)
                 if not last_name == '':
                     for elem in set2:
-                        if (elem.userObj.last_name.lower()).find(last_name.lower()) >= 0 and determineEmpType(elem,empl,manager,hod,admin, staff):
+                        if (elem.user.last_name.lower()).find(last_name.lower()) >= 0 and determineEmpType(elem,empl,manager,hod,admin, staff):
                             tempset.append(elem)
                 if not userID == '':
                     for elem in set2:
@@ -190,14 +190,14 @@ def search_results(request):
                             tempset.append(elem)
                 if not username == '':
                     for elem in set2:
-                        if (elem.userObj.username.lower()).find(username.lower()) >= 0 and determineEmpType(elem,empl,manager,hod,admin, staff):
+                        if (elem.user.username.lower()).find(username.lower()) >= 0 and determineEmpType(elem,empl,manager,hod,admin, staff):
                             tempset.append(elem)
                             
             else:
                 for elem in set2:
                     if (determineEmpType(elem,empl,manager,hod,admin, staff)):
                         tempset.append(elem)
-            c = Context({'list': tempset})
+            c = Context({'emp1':emp ,'list': tempset})
             t = get_template('employeeList.html')
             return HttpResponse(t.render(c))
         else:
@@ -205,7 +205,7 @@ def search_results(request):
             for elem in set2:
                 if (determineAuthType(elem,emp)):
                     tempset.append(elem)
-            c = Context({'list': tempset})
+            c = Context({'emp1':emp ,'list': tempset})
             t = get_template('employeeList.html')
             return HttpResponse(t.render(c))
     else:
@@ -214,7 +214,7 @@ def search_results(request):
 @emp_auth_needed
 def search_page(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD):
@@ -222,7 +222,7 @@ def search_page(request):
         h = request.GET.get('h' ,False)
         a = request.GET.get('a' ,False)
         w = request.GET.get('w' ,False)
-        c = Context({'m':m , 'h':h , 'a': a, 'w': w})
+        c = Context({'emp1':emp ,'m':m , 'h':h , 'a': a, 'w': w})
         t = get_template('searchPage.html')
         return HttpResponse(t.render(c))
     
@@ -231,7 +231,7 @@ def search_page(request):
 @emp_auth_needed
 def employee_edit(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None   
     if emp is not None and (emp.is_Admin or emp.is_Manager or emp.is_HOD): 
@@ -241,13 +241,13 @@ def employee_edit(request):
 
             form  = EmployeeEditForm(instance = empl)
             form.set_exclude(emp)
-            c = Context({"form":form})
+            c = Context({'emp1':emp ,"form":form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
         else:
             form = EmployeeEditForm( request.POST,instance = empl)
             form.save()
             t = get_template('added.html')
-            c = Context({"employee":form.save()})
+            c = Context({'emp1':emp ,"employee":form.save()})
             
             return HttpResponse(t.render(c))    
 
@@ -255,27 +255,27 @@ def employee_edit(request):
 @emp_auth_needed
 def employee_delete(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and (emp.is_Admin or emp.is_HOD or emp.is_Manager):
         empdelID = request.GET['empId']
         empdel = EmployeeInfo.objects.get(userId = empdelID) 
-        userObj = empdel.userObj
-        username = userObj.username
+        user = empdel.user
+        username = user.username
         if emp.is_Admin:
             empdel.delete()
-            userObj.delete()
+            user.delete()
             var = "The employee with id: " + empdelID + "User Login Name: " + username +  "has been deleted from the records."
             return HttpResponse(var)
         if emp.is_HOD and not empdel.is_Admin and not empdel.is_HOD:
             empdel.delete()
-            userObj.delete()
+            user.delete()
             var = "The employee with id: " + empdelID + "User Login Name: " + username +  "has been deleted from the records."
             return HttpResponse(var)
         if emp.is_Manager and not empdel.is_Admin and not empdel.is_HOD and not empdel.is_Manager:
             empdel.delete()
-            userObj.delete()
+            user.delete()
             var = "The employee with id: " + empdelID + "User Login Name: " + username +  "has been deleted from the records."
             return HttpResponse(var)
         return HttpResponse("You are not authorised to do this . ")     
@@ -288,7 +288,8 @@ def view_complete_emp(request):
     coursesToAttend = CoursesToAttend.objects.filter(employee = emp)  
     coursesAttending = CourseEmployeeList.objects.filter(employee = emp)
     t = get_template('empDetails.html')
-    c = Context({'emp':emp,'coursesAttended':coursesAttended,'coursesToAttend':coursesToAttend,'coursesAttending':coursesAttending})
+    emp1 = EmployeeInfo.objects.all().get(user = request.user )
+    c = Context({'emp1':emp1 ,'emp':emp,'coursesAttended':coursesAttended,'coursesToAttend':coursesToAttend,'coursesAttending':coursesAttending})
     return HttpResponse(t.render(c))  
 @emp_auth_needed 
 def view_emp_grades(request):
@@ -300,7 +301,8 @@ def view_emp_grades(request):
     Feedback = Courses.models.Feedback.objects.get(employee = employee , batch = batch)
     print Grades
     t = get_template('graded.html')
-    c = Context({'list':[Grades,Feedback],'grading':True})
+    emp = EmployeeInfo.objects.all().get(user = request.user )
+    c = Context({'emp1':emp ,'list':[Grades,Feedback],'grading':True})
     return HttpResponse(t.render(c))  
     
 @emp_auth_needed 
@@ -312,7 +314,7 @@ def view_course_employee_details(request):
     grades = get_object_or_404(Grading,batch = batch , employee = emp)   
     feedback = get_object_or_404(Feedback,batch = batch , employee = emp)  
     t = get_template('gradeDetails.html')
-    c = Context({'emp':emp, 'batch':batch , 'grades':grades, 'feedback':feedback})
+    c = Context({'emp1':emp ,'emp':emp, 'batch':batch , 'grades':grades, 'feedback':feedback})
     return HttpResponse(t.render(c))
 
     
@@ -323,13 +325,13 @@ def view_course_employee_details(request):
 @emp_auth_needed 
 def  manager_registration(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if (request.session["count2"] - request.session["count1"] == -1) and emp is not None and (emp.is_Admin or emp.is_HOD):
         if request.POST :
             user = User.objects.all().get(username = request.session["username"] ) 
-            employee = EmployeeInfo(userObj = user ,is_Staff = False , is_Manager = True ,is_HOD = False)
+            employee = EmployeeInfo(user = user ,is_Staff = False , is_Manager = True ,is_HOD = False)
             managerForm = ManagerForm(request.POST,instance = employee )
             
             if managerForm.is_valid():
@@ -341,18 +343,18 @@ def  manager_registration(request):
                     return HttpResponseForbidden("Not authorised to do this")
                 request.session["count2"] += 1
                 t = get_template('added.html')
-                c = Context({'employee':managerForm.save() })
+                c = Context({'emp1':emp ,'employee':managerForm.save() })
                 return HttpResponse(t.render(c))
             else :
                 #t = get_template('registration.html')
-                c = Context({'form': managerForm})
+                c = Context({'emp1':emp ,'form': managerForm})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
             
             
         else:       
             managerForm =  ManagerForm()
-            c = Context({'form': managerForm})
+            c = Context({'emp1':emp ,'form': managerForm})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         return HttpResponse('We are sorry but some error has occurred try to register again  from the start ')
@@ -360,30 +362,30 @@ def  manager_registration(request):
 @emp_auth_needed   
 def  admin_registration(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if (request.session["count2"] - request.session["count1"] == -1) and emp is not None and emp.is_Admin:
         if request.POST :
             user = User.objects.all().get(username = request.session["username"] ) 
-            employee = EmployeeInfo(userObj = user ,is_Staff = False)
+            employee = EmployeeInfo(user = user ,is_Staff = False)
             adminForm = AdminForm(request.POST,instance = employee )
             if adminForm.is_valid():
                 adminForm.save()
                 request.session["count2"] += 1
                 t = get_template('added.html')
-                c = Context({'employee':adminForm.save() })
+                c = Context({'emp1':emp ,'employee':adminForm.save() })
                 return HttpResponse(t.render(c))
             else :
                 #t = get_template('registration.html')
-                c = Context({'form': adminForm})
+                c = Context({'emp1':emp ,'form': adminForm})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
             
             
         else:       
             adminForm =  AdminForm()
-            c = Context({'form': adminForm})
+            c = Context({'emp1':emp ,'form': adminForm})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         return HttpResponse('We are sorry but some error has occurred try to register again  from the start ')
@@ -392,31 +394,31 @@ def  admin_registration(request):
 @emp_auth_needed   
 def  hod_registration(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     
     if (request.session["count2"] - request.session["count1"] == -1) and emp is not None and emp.is_Admin:
         if request.POST :
             user = User.objects.all().get(username = request.session["username"] ) 
-            hod = EmployeeInfo(userObj = user , is_Staff = False ,  is_HOD = True )
+            hod = EmployeeInfo(user = user , is_Staff = False ,  is_HOD = True )
             hodForm = HODForm(request.POST,instance = hod )
             if hodForm.is_valid() :
                 hod = hodForm.save()  
                 request.session["count2"] += 1
                 t = get_template('added.html')
-                c = Context({'employee':hodForm.save() })
+                c = Context({'emp1':emp ,'employee':hodForm.save() })
                 return HttpResponse(t.render(c))
             else :
                 #t = get_template('registration.html')
-                c = Context({'form': hodForm})
+                c = Context({'emp1':emp ,'form': hodForm})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
             
             
             
         else:       
             hodForm =  HODForm()
-            c = Context({'form': hodForm})
+            c = Context({'emp1':emp ,'form': hodForm})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
     else:
         return HttpResponse('We are sorry but some error has occurred try to register again  from the start ')
@@ -426,7 +428,7 @@ def  hod_registration(request):
 @emp_auth_needed
 def create_department(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
         
@@ -438,28 +440,28 @@ def create_department(request):
                 deptID = form.cleaned_data['deptID']
                 dept = Department.objects.get(deptID = deptID)
                 t = get_template('deptAdded.html')
-                c = Context({'dept':dept})
+                c = Context({'emp1':emp ,'dept':dept})
                 return HttpResponse(t.render(c))
         else:
             form = DepartmentForm()
-            c = Context({'form': form})
+            c = Context({'emp1':emp ,'form': form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
 @emp_auth_needed       
 def search_department(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
         
     if emp is not None and emp.is_Admin:
         depts = list(Department.objects.all())
         t = get_template("indeptsSearch.html")
-        c = Context({'depts':depts})
+        c = Context({'emp1':emp ,'depts':depts})
         return HttpResponse(t.render(c))
 @emp_auth_needed
 def edit_department(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and emp.is_Admin:
@@ -469,17 +471,17 @@ def edit_department(request):
             form = DepartmentForm(request.POST,instance = dept)
             form.save()
             t = get_template('deptAdded.html')
-            c = Context({'dept':dept})
+            c = Context({'emp1':emp ,'dept':dept})
             return HttpResponse(t.render(c))
         else:
             form = DepartmentForm(instance = dept)
-            c = Context({'form':form}) 
+            c = Context({'emp1':emp ,'form':form}) 
             return render_to_response('registration.html', context_instance=RequestContext(request,c))
 
 @emp_auth_needed       
 def delete_department(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
     if emp is not None and emp.is_Admin:
@@ -492,7 +494,7 @@ def delete_department(request):
 @emp_auth_needed 
 def generate_schedule(request): 
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None  
     if emp is not None and (emp.is_Admin ):
@@ -504,14 +506,24 @@ def generate_schedule(request):
                 message = "Here is the schedule ."
                 t = get_template('documentList.html')
                 liste = [userfunctions.generate_schedule(int(year), emp)]    
-                c = Context({'documents': liste})
+                c = Context({'emp1':emp ,'documents': liste})
+                c = RequestContext(request,c)
                 return HttpResponse(t.render(c))
             else:
-                c = Context({'form':form})
+                c = Context({'emp1':emp ,'form':form})
                 return render_to_response('registration.html', context_instance=RequestContext(request,c))
         else:
             form = YearForm()
-            c = Context({'form':form})
+            c = Context({'emp1':emp ,'form':form})
             return render_to_response('registration.html', context_instance=RequestContext(request,c))   
     else:
-        return HttpResponse("You are not authorised to view this.")   
+        return HttpResponse("You are not authorised to view this.")  
+@emp_auth_needed 
+def down_employee_list_template(request): 
+    emp = EmployeeInfo.objects.all().get(user = request.user )
+    if emp.is_Admin:
+        filer  = userfunctions.generate_employee_list_template()
+        t = get_template('documentList.html')
+        c = Context({'emp1':emp ,'documents': [filer]})
+        return HttpResponse(t.render(c))
+    return HttpResponseRedirect("../../loggedin")

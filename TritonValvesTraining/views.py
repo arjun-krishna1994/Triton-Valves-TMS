@@ -6,12 +6,13 @@ Created on May 27, 2014
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponseForbidden,\
     HttpResponse
-from Users.models import EmployeeInfo
+from Users.models import EmployeeInfo, Schedule
 from django.utils.unittest.compatibility import wraps
 from django.template.loader import get_template
 from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext, Context
+import datetime
 
 
 
@@ -22,7 +23,7 @@ def emp_auth_needed(view_func):
         if not request.user.is_authenticated():
             return HttpResponseRedirect('../../../login')
         try:
-            emp = EmployeeInfo.objects.all().get(userObj = request.user )
+            emp = EmployeeInfo.objects.all().get(user = request.user )
         except EmployeeInfo.DoesNotExist:
             emp = None
         
@@ -68,33 +69,45 @@ def logout(request):
 @emp_auth_needed 
 def logged_in_page(request):
     try:
-        emp = EmployeeInfo.objects.all().get(userObj = request.user )
+        emp = EmployeeInfo.objects.all().get(user = request.user )
     except EmployeeInfo.DoesNotExist:
         emp = None
-    
+    print request.user.get_profile().is_Admin
     request.session["username"] = request.user.username
     request.session["count1"] = 0
     request.session["count2"] = 0
+    try:
+        day_notifications = Schedule.objects.get(date = datetime.datetime.today())
+        day_notifications = list(day_notifications.message.all())
+        notifications = []
+        for notification in day_notifications:
+            notifications.append(notification.message)
+    except Schedule.DoesNotExist:
+        notifications = ["No Notifications Today."]
     if  emp is not None :
         t = get_template('adminPage.html')
         if emp.is_Admin:
             
-            c = Context({'Admin': True , 'first_name': emp.userObj.first_name , 'last_name': emp.userObj.last_name })
+            c = Context({'emp1':emp ,'Admin': True , 'first_name': emp.user.first_name , 'last_name': emp.user.last_name , 'notifications':notifications})
+            c = RequestContext(request,c)
             return HttpResponse(t.render(c))
             
             
         elif emp.is_HOD:
-            c = Context({'HOD': True, 'first_name': emp.userObj.first_name , 'last_name': emp.userObj.last_name })
+            c = Context({'emp1':emp ,'HOD': True, 'first_name': emp.user.first_name , 'last_name': emp.user.last_name , 'notifications':notifications})
+            c = RequestContext(request,c)
             return HttpResponse(t.render(c))
             
             
         elif emp.is_Manager:
-            c = Context({'Manager': True, 'first_name': emp.userObj.first_name , 'last_name': emp.userObj.last_name })
+            c = Context({'emp1':emp ,'Manager': True, 'first_name': emp.user.first_name , 'last_name': emp.user.last_name , 'notifications':notifications})
+            c = RequestContext(request,c)
             return HttpResponse(t.render(c))
             
             
         else:    
-            c = Context({'Employee': True,'user':request.user})
+            c = Context({'emp1':emp ,'Employee': True,'user':request.user})
+            c = RequestContext(request,c)
             return HttpResponse(t.render(c))
             
             

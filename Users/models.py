@@ -10,7 +10,10 @@ class Department(models.Model):
         return '%s ' % ( self.dept_name )
     
 class EmployeeInfo(models.Model):
-    userObj = models.OneToOneField(User)
+    class Meta:
+        app_label = 'Users'
+
+    user = models.OneToOneField(User)
     is_Manager = models.BooleanField(default = False ,verbose_name = 'Supervisor/Unit Incharge')
     is_Admin = models.BooleanField(default = False) 
     is_HOD = models.BooleanField(default = False)
@@ -26,7 +29,7 @@ class EmployeeInfo(models.Model):
     designation = models.CharField(max_length = 25)
     grade = models.CharField(max_length = 20,default = 'NA')
     def __unicode__(self):
-        return '%s %s' % (self.userObj.first_name, self.userObj.last_name)
+        return '%s %s' % (self.user.first_name, self.user.last_name)
     def authorised_to_handle(self, employee = None , batch = None , course = None):
         handler = self
         all_dept = Department.objects.get(dept_id = 'ALL')
@@ -57,14 +60,14 @@ class CoursesAttended(models.Model):
     batch = models.ForeignKey(BatchDetails, null = True)
     employee = models.ForeignKey(EmployeeInfo)
     def __unicode__(self):
-        return '%s  %s  %s' % (self.course.course_name , self.employee.userObj.first_name , self.employee.userObj.last_name)
+        return '%s  %s  %s' % (self.course.course_name , self.employee.user.first_name , self.employee.user.last_name)
     
 class CoursesToAttend(models.Model):
     employee = models.ForeignKey(EmployeeInfo)
     course = models.ForeignKey(Course)
     batch = models.ForeignKey(BatchDetails, null = True)
     def __unicode__(self):
-        return '%s  %s  %s' % (self.course.course_name , self.employee.userObj.first_name , self.employee.userObj.last_name)
+        return '%s  %s  %s' % (self.course.course_name , self.employee.user.first_name , self.employee.user.last_name)
     
 
  

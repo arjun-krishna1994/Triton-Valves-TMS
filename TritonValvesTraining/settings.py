@@ -56,7 +56,13 @@ TEMPLATE_DIRS = (
 ROOT_URLCONF = 'TritonValvesTraining.urls'
 
 WSGI_APPLICATION = 'TritonValvesTraining.wsgi.application'
-
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+"django.core.context_processors.debug",
+"django.core.context_processors.i18n",
+"django.core.context_processors.media",
+"django.core.context_processors.static",
+"django.core.context_processors.tz",
+"django.contrib.messages.context_processors.messages")
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -105,6 +111,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 """
+tttc@tritonvalves.com
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
 EMAIL_HOST_USER = ''
@@ -113,8 +120,9 @@ EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'testing@example.com'"""
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'arjunthegreat420@gmail.com'
-EMAIL_HOST_PASSWORD = 'Counter1.6'
+EMAIL_HOST_USER = 'arjun.krishna1994@gmail.com'
+EMAIL_HOST_PASSWORD = 'spiderman123'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 AUTH_PROFILE_MODULE = 'Users.EmployeeInfo'
+
